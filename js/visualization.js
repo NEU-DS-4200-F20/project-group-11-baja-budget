@@ -9,7 +9,7 @@
             d.amount_spent = +d.amount_spent;
         });
 
-        console.log(data)
+       // console.log(data)
 
 
         // General event type for selections, used by d3-dispatch
