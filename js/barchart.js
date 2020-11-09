@@ -41,7 +41,8 @@ function sourceBarChart() {
         let percent_spent = d => d.amount_spent / d.total_amount * 100;
         let percent_remaining = d => 100 - percent_spent(d);
 
-        // sort data in descending order of the percent remaining
+
+        // sort data in descending order of the percent remaining todo decide if want to keep
         data.sort((a, b) => d3.descending(percent_remaining(a), percent_remaining(b)))
 
         //Define scales
@@ -49,12 +50,17 @@ function sourceBarChart() {
             .domain(data.map(d => d.source))
             .range([margin.left, width - margin.right])
             .padding(0.5);
-
-        let yScale = d3
-            .scaleLinear()
+        let yScale = d3.scaleLinear()
             .domain([0, 100])
             .range([height - margin.bottom, margin.top]);
 
+        // add title
+        svg.append("text")
+            .attr("x", (width / 2))
+            .attr("y", (margin.top / 2))
+            .classed("viz-tittle", true)
+            .attr("text-anchor", "middle")
+            .text("Remaining Funding Sources");
 
 
         //Draw Axes
