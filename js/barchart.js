@@ -26,6 +26,8 @@ function sourceBarChart() {
     // specified by the selector using the given data
     function chart(selector, data) {
 
+        // todo sort data by the percent remaining
+
         let svg = d3.select(selector)
             .append('svg')
             //.attr('preserveAspectRatio', 'xMidYMid meet')
@@ -34,6 +36,13 @@ function sourceBarChart() {
 
         // svg = svg.append('g')
         //     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        // define useful functions
+        let percent_spent = d => d.amount_spent / d.total_amount * 100;
+        let percent_remaining = d => 100 - percent_spent(d);
+
+        // sort data in descending order of the percent remaining
+        data.sort((a, b) => d3.descending(percent_remaining(a), percent_remaining(b)))
 
         //Define scales
         let xScale = d3.scaleBand()
@@ -46,10 +55,7 @@ function sourceBarChart() {
             .domain([0, 100])
             .range([height - margin.bottom, margin.top]);
 
-        let percent_spent =
-            d => d.amount_spent / d.total_amount * 100;
-        let percent_remaining =
-            d => (d.total_amount - d.amount_spent) / d.total_amount * 100;
+
 
         //Draw Axes
 
