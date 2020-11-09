@@ -2,17 +2,17 @@ function sourceBarChart() {
     // Based on Mike Bostock's margin convention
     // https://bl.ocks.org/mbostock/3019563
     let margin = {
-            top: 60,
-            left: 50,
-            right: 30,
-            bottom: 35
-        },
+        top: 60,
+        left: 50,
+        right: 30,
+        bottom: 30
+    },
         width = 700 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom,
         // xValue = d => d[0],
         // yValue = d => d[1],
-        // xLabelText = '',
-        // yLabelText = '',
+        xLabelText = '',
+        yLabelText = '',
         // yLabelOffsetPx = 0,
         barwidth = 50,
         barOffset = 5
@@ -44,11 +44,24 @@ function sourceBarChart() {
 
         let yScale = d3
             .scaleLinear()
-            .domain([0, 1])
+            .domain([0, 100])
             .range([height - margin.bottom, margin.top]);
 
         //Draw Axes
 
+        // X axis
+        let xAxis = svg.append('g')
+            .attr('transform', `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom().scale(xScale))
+
+            //Add label
+            .append('text')
+            .attr('x', width - margin.left)
+            .attr('y', margin.bottom)
+            .style('stroke', 'black')
+            .text(xLabelText);
+/*
+        //Y axis
         let yAxis = svg
             .append('g')
             .attr('transform', `translate(${margin.left},0)`)
@@ -56,22 +69,12 @@ function sourceBarChart() {
 
             //Add label
             .append('text')
-            .attr('y', 30)
+            .attr('y', margin.bottom)
             .attr('x', 20)
             .style('stroke', 'black')
-            .text('Amount Spent');
+            .text(yLabelText);
+*/
 
-        // X axis
-        svg.append('g')
-            .attr('transform', `translate(0,${height - margin.bottom})`)
-            .call(d3.axisBottom().scale(xScale))
-
-            //Add label
-            .append('text')
-            .attr('x', width - margin.left)
-            .attr('y', 30)
-            .style('stroke', 'black')
-            .text('Sources');
 
         //Draw bars
         svg.selectAll('rect')
@@ -82,14 +85,38 @@ function sourceBarChart() {
                 return xScale(d.source);
             })
             .attr('y', function (d) {
-                return d.amount_spent / d.total_amount;
+                //not exactly at 100, figure this out later pls (...)
+                console.log(d.amount_spent/d.total_amount)
+                return margin.top;
+                //return height + margin.bottom - yScale((d.amount_spent / d.total_amount));
+                
+            })
+            .attr('width', xScale.bandwidth())
+            .attr('fill', 'grey')
+            .attr('height', function (d) {
+                return height - margin.bottom - yScale((d.amount_spent / d.total_amount) * 100);
+                //return height - margin.bottom - yScale(d.amount_spent);
+            });
+
+        //Draw bars
+        svg.selectAll('#main-bar-chart')
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('x', function (d) {
+                return xScale(d.source);
+            })
+            .attr('y', function (d) {
+                console.log(((d.total_amount - d.amount_spent) / d.total_amount) * 100)
+                return height + margin.bottom - yScale((d.amount_spent / d.total_amount) * 100);
             })
             .attr('width', xScale.bandwidth())
             .attr('fill', 'steelblue')
             .attr('height', function (d) {
-                return (height - margin.bottom - yScale((d.total_amount - d.amount_spent) / d.total_amount));
+                return height - margin.bottom - yScale(((d.total_amount - d.amount_spent) / d.total_amount) * 100);
                 //return height - margin.bottom - yScale(d.amount_spent);
             });
+
 
         return chart;
     }
