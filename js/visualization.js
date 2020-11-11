@@ -3,14 +3,10 @@
 ((() => {
 
     d3.csv("data/funds.csv").then(function (data) {
-
         data.forEach(function(d) {
             d.total_amount = +d.total_amount;
             d.amount_spent = +d.amount_spent;
         });
-
-       // console.log(data)
-
 
         // General event type for selections, used by d3-dispatch
         // https://github.com/d3/d3-dispatch
