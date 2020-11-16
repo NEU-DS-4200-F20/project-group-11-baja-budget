@@ -59,7 +59,8 @@ function sourceBarChart() {
             .attr('x', width - margin.left)
             .attr('y', margin.bottom)
             //.classed('viz-axis-label', true)
-            .style('stroke', 'black') // todo try to move to css
+            .classed('axes', true) 
+            //.style('stroke', 'black') // todo try to move to css
             .text(xLabelText);
 
         svg.append('g') // Y Axis
@@ -70,7 +71,7 @@ function sourceBarChart() {
             .attr('y', margin.top * (3 / 4))
             .attr('x', yLabelOffset)
             //.classed('viz-axis-label', true)
-            .style('stroke', 'black') // todo try to move to css
+            .classed('axes', true) // todo try to move to css
             .text(yLabelText);
 
         //Draw bars
