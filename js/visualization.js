@@ -15,9 +15,13 @@
         // Create a line chart given x and y attributes, labels, offsets;
         // a dispatcher (d3-dispatch) for selection events;
         // a div id selector to put our svg in; and the data to use.
-        let total_fuel = sourceBarChart()
+        let total_fuel = totalBarChart()
             //.selectionDispatcher(d3.dispatch(dispatchString))
-            ('#main-bar-chart', data);
+            ('#total-bar-chart', data);
+
+        let source_fuel = sourceBarChart()
+            //.selectionDispatcher(d3.dispatch(dispatchString))
+            ('#source-bar-chart', data);
 
     })
 })());
