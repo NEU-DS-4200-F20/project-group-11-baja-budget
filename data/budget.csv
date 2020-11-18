@@ -1,0 +1,37 @@
+itemName,budgetCategory,source,amountSpent,totalAmount
+Mayhem Registration,Competition,Misc,0.00,6000.00
+Epreuve du Nord Registration,Competition,Bose,269.17,10000.00
+Illinois Registration,Competition,SABO CR,1350.00,2275.32
+Kentucky Registration,Competition,SABO CR,0.00,2275.32
+Kentucky Registration,Competition,Bose,0.00,10000.00
+Mayhem Truck,Competition,MIE,1366.19,5000.00
+EdN Truck,Competition,MIE,0.00,5000.00
+Kentucky Truck,Competition,MIE,0.00,5000.00
+Illinois Truck,Competition,MIE,0.00,5000.00
+Mayhem Truck Fuel,Competition,Bose,676.92,10000.00
+EdN Truck Fuel,Competition,Bose,0.00,10000.00
+Kentucky Truck Fuel,Competition,Bose,0.00,10000.00
+Illinois Truck Fuel,Competition,Instron,0.00,7500.00
+Mayhem Personnel Gas,Competition,Bose,765.12,10000.00
+EdN Personnel Gas,Competition,Bose,297.22,10000.00
+Kentucky Personnel Gas,Competition,Bose,0.00,10000.00
+Illinois Personnel Gas,Competition,Instron,0.00,7500.00
+Mayhem Lodging,Competition,Bose,532.80,10000.00
+EdN Hotel,Competition,Misc,1648.93,6000.00
+Kentucky Hotel,Competition,Misc,0.00,6000.00
+Illinois Hotel,Competition,Misc,0.00,6000.00
+Frame,Build,SABO VB,2420.00,10200.50
+COTS Parts,Build,SABO VB,1032.70,10200.50
+COTS Parts,Build,Instron,458.30,7500.00
+Hardware and Consumables,Build,Bose,546.19,10000.00
+Sparky,Build,Instron,128.22,7500.00
+Stock,Build,SABO VB,2634.84,10200.50
+Shocks,Build,Bose,2972.61,10000.00
+Engine,Build,Bose,309.14,10000.00
+Outsourced Parts,Build,SABO O,0.00,2275.32
+Testing Fall,Testing,Instron,1607.48,7500.00
+Testing Spring,Testing,Instron,375.89,7500.00
+Other,Testing,Instron,2227.24,7500.00
+Tools and Equipment,Other,Bose,1177.43,10000.00
+Website,Other,Bose,65.94,10000.00
+Miscellaneous,Other,Misc,-1080.41,5000.00
