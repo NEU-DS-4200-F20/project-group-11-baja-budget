@@ -30,6 +30,12 @@ h1, h2, h3 {
   background-color: #f4f1f0;
 }
 
+rect.outline {
+	fill: none;
+	stroke: black;
+	stroke-width: 2;
+}
+
 /* todo review
 
 text.viz-title {

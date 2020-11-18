@@ -22,77 +22,65 @@ function totalBarChart() {
             .append('svg')
             .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom].join(' '))
 
-        let sources = data.map(d => d.source)
-        let total = d3.sum(data, d => d.total_amount)
-        let groupData = function (data, total) {
+        let groupData = function (data) {
             // use scale to get percent values
-            const percent = d3.scaleLinear()
-                .domain([0, total])
+            let percent = d3.scaleLinear()
+                .domain([0, d3.sum(data, d => d.total_amount)])
                 .range([0, 100])
-            // filter out data that has zero values
-            // also get mapping for next placement
-            // (save having to format data for d3 stack)
+
             let cumulative = 0
             return data.map(d => {
-                let val = (d.total_amount - d.amount_spent)/total * 100
+                let val = percent(d.total_amount - d.amount_spent)
                 cumulative += val
                 return {
-                    value: val,
-                    // want the cumulative to prior value (start of rect)
-                    cumulative: cumulative - val,
                     label: d.source,
-                    percent: percent(val)
+                    value: val,
+                    cumulative: cumulative - val,
                 }
             })
         }
 
-        // todo figure this out
+        // make data structure for the visualization
+        let groupedData = groupData(data)
+
+        // define x scale
         let xScale = d3.scaleLinear()
             .domain([0, 100])
             .range([margin.left, width - margin.right])
 
-        //Define scales
-        let widthScale = d3.scaleLinear()
-            .domain([margin.left, width - margin.right])
-            .range([0, 100])
-
-        // add title
+        // add labels
         svg.append("text")
-            .attr("x", (width / 2))
-            .attr("y", (margin.top / 2))
+            .attr("x", width / 2)
+            .attr("y", margin.top / 2)
             .attr("text-anchor", "middle")
             .text(title);
-
         svg.append("text")
             .attr('x', margin.left - 20)
             .attr('y', height / 2)
             .text('E')
-
         svg.append("text")
             .attr('x', width - margin.right + 5)
             .attr('y', height / 2)
             .text('F')
 
+        // add outline
         svg.append('rect')
-            .attr('class', 'boarder')
-            .attr('x', -1 + margin.left)
-            .attr('y', -1 + height / 2 - halfBarHeight)
-            .attr('height', 2+ barHeight)
+            .attr('class', 'outline')
+            .attr('x', margin.left - 1)
+            .attr('y', height / 2 - halfBarHeight - 1)
+            .attr('height', barHeight + 2)
             .attr('width', width - margin.left - margin.right)
-            .attr('fill', 'none')
-            .style('stroke', 'black')
-            .style('stroke-width', '2')
 
+        // add stacked rectangles
         svg.selectAll(selector)
-            .data(groupData(data, total)).enter()
+            .data(groupedData).enter()
             .append('rect')
-            .attr('class', 'rect-stacked')
-            .attr('x', d => margin.left + Math.floor(d.cumulative / 100 * 620))
+            .attr('class', 'stacked')
+            .attr('x', d => Math.floor(xScale(d.cumulative)))
             .attr('y', height / 2 - halfBarHeight)
             .attr('height', barHeight)
-            .attr('width', d => padding + Math.ceil(d.value / 100 * 620))
+            .attr('width', d => padding + Math.ceil(xScale(d.value)))
             .attr('fill', 'steelblue')
-            //.style('fill', (d, i) => colors[i])
 
         return chart;
     }
