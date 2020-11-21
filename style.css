@@ -30,6 +30,14 @@ h1, h2, h3 {
   background-color: #f4f1f0;
 }
 
+/*
+todo make css for axis and graph labels and titles
+ */
+
+rect {
+	fill: lightgray;
+}
+
 rect.outline {
 	fill: none;
 	stroke: black;
@@ -37,24 +45,9 @@ rect.outline {
 }
 
 rect.selected {
-	fill: lightgreen;
+	fill: steelblue;
 }
 
-
-
-/* todo review
-
-text.viz-title {
-	color: black;
-	font-size: 16px;
-}
-
-text.viz-axis-label {
-	color: black;
-	font-size: 12px;
-}
-
- */
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */  
 #forkongithub a{

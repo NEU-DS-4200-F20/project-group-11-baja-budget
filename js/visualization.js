@@ -16,16 +16,13 @@
         // a dispatcher (d3-dispatch) for selection events;
         // a div id selector to put our svg in; and the data to use.
         let total_fuel = totalBarChart()
-            .selectionDispatcher(d3.dispatch(dispatchString))
             ('#total-bar-chart', data);
 
         let source_fuel = sourceBarChart()
             .selectionDispatcher(d3.dispatch(dispatchString))
             ('#source-bar-chart', data);
 
-
-        total_fuel.selectionDispatcher().on(dispatchString + '.lc-to-sp', source_fuel.updateSelection);
-        source_fuel.selectionDispatcher().on(dispatchString + '.lc-to-sp', total_fuel.updateSelection);
-
+        // todo comment
+        source_fuel.selectionDispatcher().on(dispatchString + '.src-to-total', total_fuel.updateSelection);
     })
 })());

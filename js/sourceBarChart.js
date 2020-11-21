@@ -61,9 +61,7 @@ function sourceBarChart() {
             .append('text')
             .attr('x', width - margin.left)
             .attr('y', margin.bottom)
-            //.classed('viz-axis-label', true)
             .classed('axes', true)
-            //.style('stroke', 'black') // todo try to move to css
             .text(xLabelText);
 
         svg.append('g') // Y Axis
@@ -78,16 +76,14 @@ function sourceBarChart() {
             .text(yLabelText);
 
 
-        //Draw bars
+        // Append outline rectangles
         svg.selectAll(selector)
             .data(data).enter()
             .append('rect')
             .classed('outline', true)
-            //.attr('fill', 'grey')
             .attr('x', d => xScale(d.source) - 1)
             .attr('y', margin.top - 1)
             .attr('width', xScale.bandwidth() + 2)
-            //.attr('height', d => padding + Math.ceil(height - margin.bottom - yScale(percent_spent(d))));
             .attr('height', height - margin.top - margin.bottom + 2);
 
 
@@ -104,23 +100,17 @@ function sourceBarChart() {
             .attr('x', d => xScale(d.source))
             .attr('width', xScale.bandwidth())
             .classed('selected', d => isSelected(d))
-            .attr('fill', 'gray')
-
             .on('click', (event, d) => {
                 selectedSources = new Set([d.source])
                 console.log(selectedSources)
-
                 // Get the name of our dispatcher's event
                 let dispatchString = Object.getOwnPropertyNames(dispatcher._)[0];
                 // Let other charts know
                 dispatcher.call(dispatchString, this, selectedSources);
-
                 bars.classed("selected", d => isSelected(d))
             });
 
-
-
-
+        // todo add brushing
 
         selectableElements = bars
         return chart;
@@ -133,22 +123,6 @@ function sourceBarChart() {
         if (!arguments.length) return dispatcher;
         dispatcher = _;
         return chart;
-    };
-
-    // Given selected data from another visualization
-    // select the relevant elements here (linking)
-    chart.updateSelection = function (selectedData) {
-        if (!arguments.length) return;
-
-        selectedSources = selectedData
-
-        selectableElements.classed("selected", d => isSelected(d))
-
-
-        // // Select an element if its datum was selected
-        // selectableElements.classed('selected', d =>
-        //     selectedData.includes(d)
-        // );
     };
 
     return chart;
