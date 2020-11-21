@@ -82,12 +82,12 @@ function sourceBarChart() {
         svg.selectAll(selector)
             .data(data).enter()
             .append('rect')
+            .classed('outline', true)
             //.attr('fill', 'grey')
             .attr('x', d => xScale(d.source) - 1)
             .attr('y', margin.top - 1)
             .attr('width', xScale.bandwidth() + 2)
             //.attr('height', d => padding + Math.ceil(height - margin.bottom - yScale(percent_spent(d))));
-            .classed('outline', true)
             .attr('height', height - margin.top - margin.bottom + 2);
 
 
@@ -104,7 +104,7 @@ function sourceBarChart() {
             .attr('x', d => xScale(d.source))
             .attr('width', xScale.bandwidth())
             .classed('selected', d => isSelected(d))
-            .attr('fill', 'steelblue')
+            .attr('fill', 'gray')
 
             .on('click', (event, d) => {
                 selectedSources = new Set([d.source])

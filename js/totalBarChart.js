@@ -13,9 +13,11 @@ function totalBarChart() {
         padding = 1,
         barHeight = 100,
         halfBarHeight = barHeight / 2,
-        selectableElements = null,
+        //selectableElements = null,
         selectedSources = new Set(),
-        dispatcher;
+        dispatcher,
+    selectedBar,
+    remainingBar;
 
     // Create the chart by adding an svg to the div with the id
     // specified by the selector using the given data
@@ -30,7 +32,6 @@ function totalBarChart() {
             let percent = d3.scaleLinear()
                 .domain([0, d3.sum(data, d => d.total_amount)])
                 .range([0, 100])
-
             let cumulative = 0
             return data.map(d => {
                 let val = percent(d.total_amount - d.amount_spent)
@@ -43,8 +44,37 @@ function totalBarChart() {
             })
         }
 
+        let groupData2 = function (data) {
+            // use scale to get percent values
+            let percent = d3.scaleLinear()
+                .domain([0, d3.sum(data, d => d.total_amount)])
+                .range([0, 100])
+
+            // todo is there a different sum?
+            let percentSelected = d3.sum(data.filter(d => ! isSelected(d))
+                    .map(d => percent(d.total_amount - d.amount_spent)));
+
+            let selected = {
+                label: selectedSources, // todo fix to be list of string
+                value: percentSelected,
+                cumulative: 0
+            }
+
+            let notSelected = {
+                label: new Set(data.filter(d => isSelected(d)).map(d => d.source)),
+                value: d3.sum(data.filter(d => isSelected(d))
+                    .map(d => percent(d.total_amount - d.amount_spent))),
+                cumulative: percentSelected
+            }
+
+            return [selected, notSelected]
+        }
+
+        // todo make sure to add removing selection when click on nothing
+        selectedSources = new Set(data.map(d => d.source));
+
         // make data structure for the visualization
-        let groupedData = groupData(data)
+        let groupedData = groupData2(data) // groupData(data)
 
         // define x scale
         let xScale = d3.scaleLinear()
@@ -74,36 +104,59 @@ function totalBarChart() {
             .attr('height', barHeight + 2)
             .attr('width', width - margin.left - margin.right)
 
-        // add stacked rectangles
-        let bars = svg.selectAll(selector)
-            .data(groupedData).enter()
-            .append('rect')
 
-        bars.attr('x', d => margin.left + Math.floor(620 * d.cumulative / 100))//xScale(d.cumulative)))
-            .attr('width', d => padding + Math.ceil(620 * d.value / 100))//xScale(d.value)))
+        // todo this does not make a rectangle
+        selectedBar = svg.selectAll(selector)
+            //.data(groupedData[0]).enter()
+            .append('rect')
+            .attr('x', margin.left + Math.floor(620 * groupedData[0].cumulative / 100))//xScale(d.cumulative)))
+            .attr('width', padding + Math.ceil(620 * groupedData[1].value / 100))//xScale(d.value)))
             .attr('y', height / 2 - halfBarHeight)
             .attr('height', barHeight)
-            .classed('selected', d => isSelected(d.label))
-            .attr('fill', 'steelblue')
-            .on('click', (event, d) => {
+            .classed("selected", true)
 
-                selectedSources = new Set([d.label])
-                console.log(selectedSources)
-
-                // Get the name of our dispatcher's event
-                let dispatchString = Object.getOwnPropertyNames(dispatcher._)[0];
-                // Let other charts know
-                dispatcher.call(dispatchString, this, selectedSources);
-
-                bars.classed("selected", d => isSelected(d))
-
-            });
+        remainingBar =
+            svg.selectAll(selector)
+                //.data(groupedData[1]).enter()
+                .append('rect')
+                .attr('x', margin.left + Math.floor(620 * groupedData[1].cumulative / 100))//xScale(d.cumulative)))
+                .attr('width', padding + Math.ceil(620 * groupedData[1].value / 100))//xScale(d.value)))
+                .attr('y', height / 2 - halfBarHeight)
+                .attr('height', barHeight)
+                .classed("not-selected", true)
 
 
-        selectableElements = bars
+        // // add stacked rectangles
+        // let bars = svg.selectAll(selector)
+        //     .data(groupedData).enter()
+        //     .append('rect')
+        //
+        // bars.attr('x', d => margin.left + Math.floor(620 * d.cumulative / 100))//xScale(d.cumulative)))
+        //     .attr('width', d => padding + Math.ceil(620 * d.value / 100))//xScale(d.value)))
+        //     .attr('y', height / 2 - halfBarHeight)
+        //     .attr('height', barHeight)
+        //     //.classed('selected', d => isSelected(d))
+        //     .attr('fill', 'steelblue')
+        //     // .on('click', (event, d) => {
+        //     //
+        //     //     selectedSources = new Set([d.label])
+        //     //     console.log(selectedSources)
+        //     //
+        //     //     // Get the name of our dispatcher's event
+        //     //     let dispatchString = Object.getOwnPropertyNames(dispatcher._)[0];
+        //     //     // Let other charts know
+        //     //     dispatcher.call(dispatchString, this, selectedSources);
+        //     //
+        //     //     bars.classed("selected", d => isSelected(d))
+        //     //
+        //     // });
+
+
+        //selectableElements = bars
         return chart;
     }
 
+    // todo fix this to be simple string
     let isSelected = d => selectedSources.has(d.label);
 
     // Gets or sets the dispatcher we use for selection events
@@ -118,9 +171,10 @@ function totalBarChart() {
     chart.updateSelection = function (selectedData) {
         if (!arguments.length) return;
 
-        selectedSources = selectedData
+        // todo how to update grouped data
 
-        selectableElements.classed("selected", d => isSelected(d))
+        // selectedSources = selectedData
+        // selectableElements.classed("selected", d => isSelected(d))
 
         // // Select an element if its datum was selected
         // selectableElements.classed('selected', d =>
