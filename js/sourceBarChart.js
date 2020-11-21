@@ -16,7 +16,10 @@ function sourceBarChart() {
         xLabelText = 'Funding Source',
         yLabelText = 'Percent Remaining',
         padding = 1,
-        yLabelOffset = 40;
+        yLabelOffset = 40,
+        selectableElements = null,
+        selectedSources = new Set(),
+        dispatcher;
 
     // Create the chart by adding an svg to the div with the id
     // specified by the selector using the given data
@@ -59,7 +62,7 @@ function sourceBarChart() {
             .attr('x', width - margin.left)
             .attr('y', margin.bottom)
             //.classed('viz-axis-label', true)
-            .classed('axes', true) 
+            .classed('axes', true)
             //.style('stroke', 'black') // todo try to move to css
             .text(xLabelText);
 
@@ -74,27 +77,79 @@ function sourceBarChart() {
             .classed('axes', true) // todo try to move to css
             .text(yLabelText);
 
-        //Draw bars
-        svg.selectAll(selector)
-            .data(data).enter()
-            .append('rect')
-            .attr('fill', 'grey')
-            .attr('x', d => xScale(d.source))
-            .attr('y', margin.top)
-            .attr('width', xScale.bandwidth())
-            .attr('height', d => padding + Math.ceil(height - margin.bottom - yScale(percent_spent(d))));
 
         //Draw bars
         svg.selectAll(selector)
             .data(data).enter()
             .append('rect')
-            .attr('fill', 'steelblue')
+            //.attr('fill', 'grey')
+            .attr('x', d => xScale(d.source) - 1)
+            .attr('y', margin.top - 1)
+            .attr('width', xScale.bandwidth() + 2)
+            //.attr('height', d => padding + Math.ceil(height - margin.bottom - yScale(percent_spent(d))));
+            .classed('outline', true)
+            .attr('height', height - margin.top - margin.bottom + 2);
+
+
+        // todo make sure to add removing selection when click on nothing
+        selectedSources = new Set(data.map(d => d.source));
+
+        //Draw bars
+        let bars = svg.selectAll(selector)
+            .data(data).enter()
+            .append('rect')
+
+        bars.attr('y', d => height + margin.bottom - Math.ceil(yScale(percent_spent(d))))
+            .attr('height', d => height - margin.bottom - Math.floor(yScale(percent_remaining(d))))
             .attr('x', d => xScale(d.source))
-            .attr('y', d => Math.ceil(height + margin.bottom - yScale(percent_spent(d))))
             .attr('width', xScale.bandwidth())
-            .attr('height', d => Math.floor(height - margin.bottom - yScale(percent_remaining(d))));
+            .classed('selected', d => isSelected(d))
+            .attr('fill', 'steelblue')
+
+            .on('click', (event, d) => {
+                selectedSources = new Set([d.source])
+                console.log(selectedSources)
+
+                // Get the name of our dispatcher's event
+                let dispatchString = Object.getOwnPropertyNames(dispatcher._)[0];
+                // Let other charts know
+                dispatcher.call(dispatchString, this, selectedSources);
+
+                bars.classed("selected", d => isSelected(d))
+            });
+
+
+
+
+
+        selectableElements = bars
         return chart;
     }
+
+    let isSelected = d => selectedSources.has(d.source);
+
+    // Gets or sets the dispatcher we use for selection events
+    chart.selectionDispatcher = function (_) {
+        if (!arguments.length) return dispatcher;
+        dispatcher = _;
+        return chart;
+    };
+
+    // Given selected data from another visualization
+    // select the relevant elements here (linking)
+    chart.updateSelection = function (selectedData) {
+        if (!arguments.length) return;
+
+        selectedSources = selectedData
+
+        selectableElements.classed("selected", d => isSelected(d))
+
+
+        // // Select an element if its datum was selected
+        // selectableElements.classed('selected', d =>
+        //     selectedData.includes(d)
+        // );
+    };
 
     return chart;
 }

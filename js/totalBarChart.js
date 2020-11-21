@@ -12,7 +12,10 @@ function totalBarChart() {
         title = 'Total Remaining Budget (%)',
         padding = 1,
         barHeight = 100,
-        halfBarHeight = barHeight / 2;
+        halfBarHeight = barHeight / 2,
+        selectableElements = null,
+        selectedSources = new Set(),
+        dispatcher;
 
     // Create the chart by adding an svg to the div with the id
     // specified by the selector using the given data
@@ -72,18 +75,58 @@ function totalBarChart() {
             .attr('width', width - margin.left - margin.right)
 
         // add stacked rectangles
-        svg.selectAll(selector)
+        let bars = svg.selectAll(selector)
             .data(groupedData).enter()
             .append('rect')
-            .attr('class', 'stacked')
-            .attr('x', d => Math.floor(xScale(d.cumulative)))
+
+        bars.attr('x', d => margin.left + Math.floor(620 * d.cumulative / 100))//xScale(d.cumulative)))
+            .attr('width', d => padding + Math.ceil(620 * d.value / 100))//xScale(d.value)))
             .attr('y', height / 2 - halfBarHeight)
             .attr('height', barHeight)
-            .attr('width', d => padding + Math.ceil(xScale(d.value)))
+            .classed('selected', d => isSelected(d.label))
             .attr('fill', 'steelblue')
+            .on('click', (event, d) => {
 
+                selectedSources = new Set([d.label])
+                console.log(selectedSources)
+
+                // Get the name of our dispatcher's event
+                let dispatchString = Object.getOwnPropertyNames(dispatcher._)[0];
+                // Let other charts know
+                dispatcher.call(dispatchString, this, selectedSources);
+
+                bars.classed("selected", d => isSelected(d))
+
+            });
+
+
+        selectableElements = bars
         return chart;
     }
+
+    let isSelected = d => selectedSources.has(d.label);
+
+    // Gets or sets the dispatcher we use for selection events
+    chart.selectionDispatcher = function (_) {
+        if (!arguments.length) return dispatcher;
+        dispatcher = _;
+        return chart;
+    };
+
+    // Given selected data from another visualization
+    // select the relevant elements here (linking)
+    chart.updateSelection = function (selectedData) {
+        if (!arguments.length) return;
+
+        selectedSources = selectedData
+
+        selectableElements.classed("selected", d => isSelected(d))
+
+        // // Select an element if its datum was selected
+        // selectableElements.classed('selected', d =>
+        //     selectedData.includes(d)
+        // );
+    };
 
     return chart;
 }

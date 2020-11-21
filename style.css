@@ -36,6 +36,10 @@ rect.outline {
 	stroke-width: 2;
 }
 
+rect.selected {
+	fill: lightgreen;
+}
+
 /* todo review
 
 text.viz-title {
