@@ -11,16 +11,7 @@ function budgetCatBarChart() {
         // todo review sizes
         width = 700 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom,
-        // xValue = d => d[0],
-        // yValue = d => d[1],
-        title = 'Percent Remaining by Funding Source (%)',
-        xLabelText = 'Funding Source',
-        yLabelText = 'Percent Remaining',
-        padding = 1,
-        yLabelOffset = 40,
-        selectableElements = null,
-        selectedSources = new Set(),
-        dispatcher;
+        selectedSources = new Set();
 
     // Create the chart by adding an svg to the div with the id
     // specified by the selector using the given data

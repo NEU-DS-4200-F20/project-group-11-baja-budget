@@ -7,12 +7,13 @@ function sourceBarChart() {
         title = 'Percent Remaining by Funding Source (%)',
         xLabelText = 'Funding Source',
         yLabelText = 'Percent Remaining',
-        selectedSources = new Set(),
-        // null variables
+
+        // empty variables
         bars = null,
         tooltip2 = null,
         dispatcher = null,
-        all_sources = null,
+        all_sources = new Set(),
+        selectedSources = new Set(),
 
         // percent spent
         percent_spent = d => d.amount_spent / d.total_amount * 100,
@@ -23,7 +24,7 @@ function sourceBarChart() {
         // function that returns whether selected sources contains the given string
         isSelected = d => selectedSources.has(d),
 
-        // Updates the selected sources and call dispatcher
+        // Updates the selected sources and calls dispatcher
         updateSelection = function (event, d) {
             // todo once i added this, an error started showing up
             if (d == null || !d.hasOwnProperty('source')) {
@@ -100,8 +101,7 @@ function sourceBarChart() {
 
         // todo make sure to add removing selection when click on nothing
         selectedSources = new Set(sources);
-        all_sources = new Set(sources)
-
+        all_sources = new Set(sources);
 
         // define tooltips
         tooltip2 = d3.select("#source-bar-chart")
@@ -113,7 +113,7 @@ function sourceBarChart() {
             .style("border", "solid")
             .style("border-width", "1px")
             .style("border-radius", "5px")
-            .style("padding", "10px")
+            .style("padding", "10px");
 
         // append and save filled bars
         bars = svg.selectAll(selector)
@@ -124,7 +124,7 @@ function sourceBarChart() {
             .attr('x', d => xScale(d.source))
             .attr('width', xScale.bandwidth())
             .classed('bar', true)
-            .classed('selected', true)
+            .classed('selected', true);
 
         // Append outline rectangles
         svg.selectAll(selector)
@@ -149,14 +149,13 @@ function sourceBarChart() {
                     + Math.round((d.total_amount - d.amount_spent) * 100) / 100
                     + "</p>")
                 .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY - 150) + "px")
-            );
+                .style("top", (event.pageY - 150) + "px"));
 
-        d3.select(selector).call(
-            d3.brush()
-                .extent([[0, 0],
-                    [width, height]])
-        )
+        // d3.select(selector).call(
+        //     d3.brush()
+        //         .extent([[0, 0],
+        //             [width, height]])
+        // )
 
         // todo add brushing
         // Highlight points when brushed
