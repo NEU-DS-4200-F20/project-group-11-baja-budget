@@ -3,7 +3,7 @@ function sourceBarChart() {
     // Based on Mike Bostock's margin convention https://bl.ocks.org/mbostock/3019563
     let margin = {top: 60, left: 75, right: 30, bottom: 30},
         width = 700 - margin.left - margin.right,
-        height = 300 - margin.top - margin.bottom,
+        height = 350 - margin.top - margin.bottom,
         title = 'Percent Remaining by Funding Source (%)',
         xLabelText = 'Funding Source',
         yLabelText = 'Percent Remaining',
@@ -26,11 +26,9 @@ function sourceBarChart() {
 
         // Updates the selected sources and calls dispatcher
         updateSelection = function (event, d) {
-        console.log(event)
-            // todo once i added this, an error started showing up
             if (d == null || !d.hasOwnProperty('source')) {
                 selectedSources = new Set(all_sources)
-            } else if (event.ctrlKey) {
+            } else if (event.shiftKey) {
                 if (selectedSources.size === all_sources.size) {
                     selectedSources = new Set([d.source])
                 } else {
@@ -106,7 +104,7 @@ function sourceBarChart() {
             .text(yLabelText);
 
         // define tooltips
-        tooltip2 = d3.select("#source-bar-chart")
+        tooltip2 = d3.select("#budget-cat-chart")
             .data(data).enter()
             .append("div")
             .style("position", "absolute") // todo move to css
@@ -152,7 +150,6 @@ function sourceBarChart() {
                     + "</p>")
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY - 150) + "px"));
-
 
         return chart;
     }
