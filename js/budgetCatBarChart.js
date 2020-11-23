@@ -24,13 +24,13 @@ function budgetCatBarChart() {
 
     // Create the chart by adding an svg to the div with the id
     // specified by the selector using the given data
-    function chart(selector, data) {
+    function chart(selector, data, sources) {
 
         let svg = d3.select(selector)
             .append('svg')
             .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom].join(' '))
 
-
+        selectedSources = new Set(sources)
 
 
 

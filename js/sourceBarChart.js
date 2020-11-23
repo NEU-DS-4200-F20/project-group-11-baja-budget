@@ -19,11 +19,13 @@ function sourceBarChart() {
         yLabelOffset = 40,
         selectedSources = new Set(),
         dispatcher,
-        ourBrush;
+        ourBrush,
+        bars,
+        all_sources;
 
     // Create the chart by adding an svg to the div with the id
     // specified by the selector using the given data
-    function chart(selector, data) {
+    function chart(selector, data, sources) {
 
         let svg = d3.select(selector)
             .append('svg')
@@ -78,16 +80,6 @@ function sourceBarChart() {
             .text(yLabelText);
 
 
-        // Append outline rectangles
-        svg.selectAll(selector)
-            .data(data).enter()
-            .append('rect')
-            .classed('outline', true)
-            .attr('x', d => xScale(d.source) - 1)
-            .attr('y', margin.top - 1)
-            .attr('width', xScale.bandwidth() + 2)
-            .attr('height', height - margin.top - margin.bottom + 2);
-
         // Create Tooltips
         let tooltip2 = d3.select("#source-bar-chart")
             .data(data).enter()
@@ -102,25 +94,25 @@ function sourceBarChart() {
 
 
 //  function that change the tooltip when user hover / move / leave a cell
-        let mousemove = function(event, d) {
+        let mousemove = function (event, d) {
             tooltip2
                 .html(
                     "<p><b>Funding Source: "
                     + d.source
-                    +"</b><br>Amount Spent: "
+                    + "</b><br>Amount Spent: "
                     + d.amount_spent
-                    +"<br>Amount Remaining: "
+                    + "<br>Amount Remaining: "
                     + Math.round((d.total_amount - d.amount_spent) * 100) / 100
-                    +"</p>"
-        )
-        .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY-150) + "px")
+                    + "</p>"
+                )
+                .style("left", (event.pageX) + "px")
+                .style("top", (event.pageY - 150) + "px")
         }
         // todo make sure to add removing selection when click on nothing
-        selectedSources = new Set(data.map(d => d.source));
-
+        selectedSources = new Set(sources);
+        all_sources = sources
         //Draw bars
-        let bars = svg.selectAll(selector)
+        bars = svg.selectAll(selector)
             .data(data).enter()
             .append('rect')
 
@@ -130,18 +122,29 @@ function sourceBarChart() {
             .attr('width', xScale.bandwidth())
             .classed('bar', true)
             .classed('selected', d => isSelected(d))
-            .on("mouseover", function(){return tooltip2.style("visibility", "visible");})
+            .on("mouseover", function () {
+                return tooltip2.style("visibility", "visible");
+            })
             .on("mousemove", mousemove)
-            .on("mouseout", function(){return tooltip2.style("visibility", "hidden");})
-            .on('click', (event, d) => {
-                selectedSources = new Set([d.source])
-                console.log(selectedSources)
-                // Get the name of our dispatcher's event
-                let dispatchString = Object.getOwnPropertyNames(dispatcher._)[0];
-                // Let other charts know
-                dispatcher.call(dispatchString, this, selectedSources);
-                bars.classed("selected", d => isSelected(d))
-            });
+            .on("mouseout", function () {
+                return tooltip2.style("visibility", "hidden");
+            })
+            .on('click', (event, d) => updateSelection(event, d));
+
+
+        // Append outline rectangles
+        svg.selectAll(selector)
+            .data(data).enter()
+            .append('rect')
+            .classed('outline', true)
+            .attr('x', d => xScale(d.source) - 1)
+            .attr('y', margin.top - 1)
+            .attr('width', xScale.bandwidth() + 2)
+            .attr('height', height - margin.top - margin.bottom + 2)
+            // .on("mouseover", function(){return tooltip2.style("visibility", "visible");})
+            // .on("mousemove", mousemove)
+            // .on("mouseout", function(){return tooltip2.style("visibility", "hidden");})
+            .on('click', (event, d) => updateSelection(event, d));
 
         // todo add brushing
 
@@ -155,6 +158,7 @@ function sourceBarChart() {
                     [-margin.left, -margin.bottom],
                     [width + margin.right, height + margin.top]
                 ]);
+
             ourBrush = brush;
             g.call(brush); // Adds the brush to this element
             // Highlight the selected circles.
@@ -164,28 +168,41 @@ function sourceBarChart() {
                     [x0, y0],
                     [x1, y1]
                 ] = event.selection;
-                // todo
-                selectedSources = new Set()
+
                 //     ()
                 // points.classed('selected', d =>
                 //     x0 <= X(d) && X(d) <= x1 && y0 <= Y(d) && Y(d) <= y1
                 // );
-                // todo review
-                // Get the name of our dispatcher's event
-                let dispatchString = Object.getOwnPropertyNames(dispatcher._)[0];
-                // Let other charts know
-                dispatcher.call(dispatchString, this, selectedSources);
-                bars.classed("selected", d => isSelected(d))
+
+                updateSelection(event, d)
             }
+
             function brushEnd(event, d) {
                 // We don't want infinite recursion
-                if(event.sourceEvent !== undefined && event.sourceEvent.type!='end'){
+                if (event.sourceEvent !== undefined && event.sourceEvent.type !== 'end') {
                     d3.select(this).call(brush.move, null);
                 }
             }
         }
 
         return chart;
+    }
+
+    let updateSelection = function (event, d) {
+        // todo once i added this, an error started showing up
+        if (d == null || !d.hasOwnProperty('source')) {
+            selectedSources = new Set(all_sources)
+        } else if (event.shiftKey) {
+            selectedSources.add(d.source)
+        } else {
+            selectedSources = new Set([d.source])
+        }
+
+        // Get the name of our dispatcher's event
+        let dispatchString = Object.getOwnPropertyNames(dispatcher._)[0];
+        // Let other charts know
+        dispatcher.call(dispatchString, this, selectedSources);
+        bars.classed("selected", d => isSelected(d))
     }
 
     let isSelected = d => selectedSources.has(d.source);
