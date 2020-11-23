@@ -34,12 +34,17 @@ h1, h2, h3 {
 todo make css for axis and graph labels and titles
  */
 
+
+
 rect {
+	fill: none;
+}
+
+rect.bar {
 	fill: lightgray;
 }
 
 rect.outline {
-	fill: none;
 	stroke: black;
 	stroke-width: 2;
 }

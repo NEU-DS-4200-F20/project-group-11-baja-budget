@@ -74,6 +74,7 @@ function totalBarChart() {
             .attr('height', barHeight)
             .classed("selected", true)
             .classed("total", true)
+            .classed("bar", true)
 
         // todo double check that x and width calculations are good,
         //  the right boarder of a gray rect moves
@@ -85,6 +86,9 @@ function totalBarChart() {
             .attr('y', height / 2 - halfBarHeight)
             .attr('height', barHeight)
             .classed("not-selected", true)
+            .classed("bar", true)
+
+
 
         return chart;
     }
