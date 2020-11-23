@@ -46,6 +46,11 @@ function sourceBarChart() {
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
     function chart(selector, data, sources) {
 
+        // todo make sure to add removing selection when click on nothing
+        // set global variables
+        selectedSources = new Set(sources);
+        all_sources = new Set(sources);
+
         // todo decide if want to keep
         // sort data in descending order of the percent remaining
         // data.sort((a, b) => d3.descending(percent_remaining(a), percent_remaining(b)))
@@ -98,10 +103,6 @@ function sourceBarChart() {
             .attr('x', - (height + margin.bottom) / 2)
             .attr("transform", "rotate(-90)")
             .text(yLabelText);
-
-        // todo make sure to add removing selection when click on nothing
-        selectedSources = new Set(sources);
-        all_sources = new Set(sources);
 
         // define tooltips
         tooltip2 = d3.select("#source-bar-chart")

@@ -51,7 +51,7 @@ svg text::selection {
 
 rect {
 	fill: none;
-	pointer-events: fill;
+	pointer-events: all;
 }
 
 rect.bar {

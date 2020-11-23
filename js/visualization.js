@@ -41,7 +41,7 @@
 
             // budget category chart
             budget_category = budgetCatBarChart()
-            ('#budget-cat-chart', second_data, sources);
+            ('#budget-cat-chart', data, second_data, sources);
 
         // When the source chart selection is updated via clicks or brushing,
         // tell the scatterplot and table to update it's selection (linking)
