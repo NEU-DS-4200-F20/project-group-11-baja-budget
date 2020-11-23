@@ -1,17 +1,37 @@
 function totalBarChart() {
 
     // Based on Mike Bostock's margin convention https://bl.ocks.org/mbostock/3019563
-    let margin = {top: 60, left: 50, right: 30, bottom: 30},
+    let margin = {top: 60, left: 50, right: 30, bottom: 50},
         width = 700 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom,
         title = 'Total Remaining Budget (%)',
+        left_label = "E",
+        right_label = "F",
         barHeight = 100,
         halfBarHeight = barHeight / 2,
         selectedSources = new Set(),
-        originalData,
+
+        // x scale function
         xScale = d3.scaleLinear()
             .domain([0, 100])
-            .range([0, width]);
+            .range([0, width]),
+
+        // function that returns whether selected sources contains the given string
+        isSelected = d => selectedSources.has(d),
+
+        // function returns the sum of percents of selected sources
+        percent_selected = function (data) {
+            let percent = d3.scaleLinear()
+                .domain([0, d3.sum(data, d => d.total_amount)])
+                .range([0, 100])
+            return d3.sum(data
+                .filter(d => isSelected(d.source))
+                .map(d => percent(d.total_amount - d.amount_spent)));
+        },
+
+        // function returns the width of the selected rectangle
+        get_width = data => Math.ceil(xScale(percent_selected(data))),
+        originalData = null;
 
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
     function chart(selector, data, sources) {
@@ -27,64 +47,52 @@ function totalBarChart() {
 
         // add labels
         svg.append("text")
+            .classed('chart-title', true)
             .attr("x", width / 2)
             .attr("y", margin.top / 2)
-            .attr("text-anchor", "middle")
             .text(title);
+
         svg.append("text")
-            .attr('x', margin.left - 15)
+            .classed('chart-title', true)
+            .attr('x', margin.left - 20)
             .attr('y', height / 2)
-            .attr("text-anchor", "middle")
-            .text('E')
+            .attr('font-size', '30')
+            .text(left_label);
+
         svg.append("text")
-            .attr('x', width - margin.right + 10)
+            .classed('chart-title', true)
+            .attr('x', width - margin.right + 15)
             .attr('y', height / 2)
-            .attr("text-anchor", "middle")
-            .text('F')
+            .attr('font-size', '30')
+            .text(right_label);
 
         // add outline rectangle
         svg.append('rect')
-            .attr('class', 'outline')
+            .classed('outline', true)
             .attr('x', margin.left - 1)
             .attr('y', height / 2 - halfBarHeight - 1)
             .attr('height', barHeight + 2)
-            .attr('width', width - margin.left - margin.right)
+            .attr('width', width - margin.left - margin.right);
 
         // add the remaining bar
         svg.append('rect')
+            .classed("bar", true)
             .attr('x', margin.left)
             .attr('width', get_width(data))
             .attr('y', height / 2 - halfBarHeight)
-            .attr('height', barHeight)
-            .classed("bar", true)
+            .attr('height', barHeight);
 
         // add the selected rectangle
         svg.append('rect')
+            .classed("bar", true)
+            .classed("total", true)
+            .classed("selected", true)
             .attr('x', margin.left)
             .attr('width', get_width(data))
             .attr('y', height / 2 - halfBarHeight)
-            .attr('height', barHeight)
-            .classed("selected", true)
-            .classed("total", true)
-            .classed("bar", true)
+            .attr('height', barHeight);
 
         return chart;
-    }
-
-    // function that returns whether selected sources contains the given string
-    let isSelected = d => selectedSources.has(d);
-
-    // function returns the width of the selected rectangle
-    let get_width = data => Math.ceil(xScale(percent_selected(data)))
-
-    // function returns the sum of percents of selected sources
-    let percent_selected = function (data) {
-        let percent = d3.scaleLinear()
-            .domain([0, d3.sum(data, d => d.total_amount)])
-            .range([0, 100])
-        return d3.sum(data
-            .filter(d => isSelected(d.source))
-            .map(d => percent(d.total_amount - d.amount_spent)));
     }
 
     // Given selected data from another visualization select the relevant elements here (linking)

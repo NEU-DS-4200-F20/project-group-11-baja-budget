@@ -21,9 +21,13 @@ h1, h2, h3 {
   height: 100%;
 }
 
-.axes {
-	stroke: black;
-	text-decoration: none;
+.chart-title {
+	text-anchor : middle;
+}
+
+.axes-label {
+	text-anchor : middle;
+	font-size: 15px;
 }
 
 .vis-svg {
@@ -35,22 +39,32 @@ todo make css for axis and graph labels and titles
  */
 
 
+svg text {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+svg text::selection {
+	background: none;
+}
 
 rect {
 	fill: none;
+	pointer-events: fill;
 }
 
 rect.bar {
 	fill: lightgray;
 }
 
+rect.selected {
+	fill: steelblue;
+}
+
 rect.outline {
 	stroke: black;
 	stroke-width: 2;
-}
-
-rect.selected {
-	fill: steelblue;
 }
 
 

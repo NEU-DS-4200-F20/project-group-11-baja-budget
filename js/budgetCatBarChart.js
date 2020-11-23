@@ -46,16 +46,6 @@ function budgetCatBarChart() {
 
         // todo how to update grouped data
         selectedSources = selectedData
-        // let groupedData = groupData(originalData);
-        //
-        // d3.selectAll("rect.total")
-        //     .attr('x', margin.left + Math.floor(620 * groupedData[0].cumulative / 100))
-        //     .attr('width', padding + Math.ceil(620 * groupedData[0].value / 100))
-        //
-        // // todo review floor / ceil and padding
-        // d3.selectAll("rect.not-selected")
-        //     .attr('x', margin.left + Math.floor(620 * groupedData[1].cumulative / 100))
-        //     .attr('width', Math.ceil(620 * groupedData[1].value / 100))
     };
 
     return chart;
