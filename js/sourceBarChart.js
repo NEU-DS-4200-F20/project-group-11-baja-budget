@@ -26,10 +26,11 @@ function sourceBarChart() {
 
         // Updates the selected sources and calls dispatcher
         updateSelection = function (event, d) {
+        console.log(event)
             // todo once i added this, an error started showing up
             if (d == null || !d.hasOwnProperty('source')) {
                 selectedSources = new Set(all_sources)
-            } else if (event.shiftKey) {
+            } else if (event.ctrlKey) {
                 if (selectedSources.size === all_sources.size) {
                     selectedSources = new Set([d.source])
                 } else {
@@ -152,51 +153,6 @@ function sourceBarChart() {
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY - 150) + "px"));
 
-        // d3.select(selector).call(
-        //     d3.brush()
-        //         .extent([[0, 0],
-        //             [width, height]])
-        // )
-
-        // todo add brushing
-        // Highlight points when brushed
-        // function brush(g) {
-        //     const brush = d3.brush()
-        //         .on('start brush', highlight)
-        //         .on('end', brushEnd)
-        //         .extent([
-        //             [-margin.left, -margin.bottom],
-        //             [width + margin.right, height + margin.top]
-        //         ]);
-        //
-        //     ourBrush = brush;
-        //     g.call(brush); // Adds the brush to this element
-        //     // Highlight the selected circles.
-        //     function highlight(event, d) {
-        //         if (event.selection === null) return;
-        //         const [
-        //             [x0, y0],
-        //             [x1, y1]
-        //         ] = event.selection;
-        //
-        //         //     ()
-        //         // points.classed('selected', d =>
-        //         //     x0 <= X(d) && X(d) <= x1 && y0 <= Y(d) && Y(d) <= y1
-        //         // );
-        //
-        //         updateSelection(event, d)
-        //     }
-        //
-        //     function brushEnd(event, d) {
-        //         // We don't want infinite recursion
-        //         if (event.sourceEvent !== undefined && event.sourceEvent.type !== 'end') {
-        //             d3.select(this).call(brush.move, null);
-        //         }
-        //     }
-        // }
-
-        // TODO check out his for brush
-        //  https://stackoverflow.com/questions/21108915/d3-js-use-brush-over-a-sequence-of-rectangles
 
         return chart;
     }
