@@ -71,15 +71,15 @@ function totalBarChart() {
             .classed('outline', true)
             .attr('x', margin.left - 1)
             .attr('y', height / 2 - halfBarHeight - 1)
-            .attr('height', barHeight + 2)
-            .attr('width', width - margin.left - margin.right);
+            .attr('width', width - margin.left - margin.right)
+            .attr('height', barHeight + 2);
 
         // add the remaining bar
         svg.append('rect')
             .classed("bar", true)
             .attr('x', margin.left)
-            .attr('width', get_width(data))
             .attr('y', height / 2 - halfBarHeight)
+            .attr('width', get_width(data))
             .attr('height', barHeight);
 
         // add the selected rectangle
@@ -88,8 +88,8 @@ function totalBarChart() {
             .classed("total", true)
             .classed("selected", true)
             .attr('x', margin.left)
-            .attr('width', get_width(data))
             .attr('y', height / 2 - halfBarHeight)
+            .attr('width', get_width(data))
             .attr('height', barHeight);
 
         return chart;

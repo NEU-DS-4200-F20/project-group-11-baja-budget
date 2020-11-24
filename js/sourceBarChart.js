@@ -104,12 +104,11 @@ function sourceBarChart() {
             .attr("transform", "rotate(-90)")
             .text(yLabelText);
 
-        // append rectangle to remove selection
+        // append empty rectangle to remove selection
         svg.append('rect')
             .attr('width', width)
             .attr('height', height)
             .on('click', () => updateSelection(null, null))
-
 
         // define tooltips
         tooltip = d3.select("#budget-cat-chart")
@@ -117,16 +116,17 @@ function sourceBarChart() {
             .append("div")
             .classed('tooltip', true);
 
+        // todo animate transition
         // append and save filled bars
         bars = svg.selectAll(selector)
             .data(data).enter()
             .append('rect')
-            .attr('y', d => height + margin.bottom - Math.ceil(yScale(percent_spent(d))))
-            .attr('height', d => height - margin.bottom - Math.floor(yScale(percent_remaining(d))))
-            .attr('x', d => xScale(d.source))
-            .attr('width', xScale.bandwidth())
             .classed('bar', true)
-            .classed('selected', true);
+            .classed('selected', true)
+            .attr('x', d => xScale(d.source))
+            .attr('y', d => height + margin.bottom - Math.ceil(yScale(percent_spent(d))))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d => height - margin.bottom - Math.floor(yScale(percent_remaining(d))));
 
         // Append outline rectangles
         svg.selectAll(selector)
@@ -138,8 +138,14 @@ function sourceBarChart() {
             .attr('width', xScale.bandwidth() + 2)
             .attr('height', height - margin.top - margin.bottom + 2)
             .on('click', (event, d) => updateSelection(event, d))
-            .on("mouseout", () => tooltip.style("visibility", "hidden"))
+            .on("mouseout", () => {
+                overSet = new Set()
+                dispatch.call('mouseover')
+                tooltip.style("visibility", "hidden")
+            })
             .on("mouseover", (event, d) => {
+                overSet = new Set([d.source])
+                dispatch.call('mouseover')
                 if (!event.shiftKey) {
                     return tooltip.style("visibility", "visible")
                 } else {
@@ -161,9 +167,19 @@ function sourceBarChart() {
                         .style("left", (event.pageX) + "px")
                         .style("top", (event.pageY - 150) + "px")
                 } else {
-                    tooltip.style("visibility", "hidden")
+                    return tooltip.style("visibility", "hidden")
                 }
             });
+
+        // define a set to keep track of the mouseover bar
+        let overSet = new Set(),
+            // create custom dispatch events
+            dispatch = d3.dispatch("mouseover");
+
+        // when mouseover is called, updates the class of the bars
+        dispatch.on('mouseover', () => {
+            bars.classed('mouseover', d => overSet.has(d.source))
+        });
 
 
         return chart;

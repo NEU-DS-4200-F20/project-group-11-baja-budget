@@ -79,6 +79,14 @@ rect.outline {
     stroke-width: 2;
 }
 
+rect.bar.mouseover {
+    fill: lightgreen;
+}
+
+rect.bar.selected.mouseover {
+    fill: lightpink;
+}
+
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
 #forkongithub a {

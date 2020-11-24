@@ -95,8 +95,8 @@ function budgetCatBarChart() {
         // append y axis label
         svg.append('text')
             .classed('axes-label', true)
-            .attr('y', margin.left / 4)
             .attr('x', -(height + margin.bottom) / 2)
+            .attr('y', margin.left / 4)
             .attr("transform", "rotate(-90)")
             .text(yLabelText);
 
@@ -109,14 +109,13 @@ function budgetCatBarChart() {
         // append filled bars and save them in a variable
         bars = svg.selectAll(selector)
             .data(data).enter()
-            .append('rect');
-
-        bars.attr('y', d => Math.ceil(yScale(d.percent)))
-            .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)))
-            .attr('x', d => xScale(d.category))
-            .attr('width', xScale.bandwidth())
+            .append('rect')
             .classed('bar', true)
-            .classed('selected', true);
+            .classed('selected', true)
+            .attr('x', d => xScale(d.category))
+            .attr('y', d => Math.ceil(yScale(d.percent)))
+            .attr('width', xScale.bandwidth())
+            .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)));
 
         // Append outline rectangles
         svg.selectAll(selector)
@@ -147,12 +146,9 @@ function budgetCatBarChart() {
     // Given selected data from another visualization select the relevant elements here (linking)
     chart.updateSelection = function (sources) {
         if (!arguments.length) return;
-
         selectedSources = sources
         let data = {}
-        get_selected_data().forEach(d => {
-            data[d.category] = d.percent
-        });
+        get_selected_data().forEach(d => data[d.category] = d.percent);
         bars.attr('y', d => Math.ceil(yScale(data[d.category])))
             .attr('height', d => height - margin.bottom - Math.floor(yScale(data[d.category])))
     };
