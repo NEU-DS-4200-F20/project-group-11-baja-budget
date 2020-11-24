@@ -4,11 +4,11 @@ function totalBarChart() {
     let margin = {top: 60, left: 50, right: 30, bottom: 50},
         width = 700 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom,
-        title = 'Total Remaining Budget (%)',
+        title = 'Total Remaining Budget',
         left_label = "E",
         right_label = "F",
-        barHeight = (height - margin.top - margin.bottom),
-        halfBarHeight = barHeight / 2,
+        barHeight = height - margin.top - margin.bottom,
+        barWidth = width - margin.left - margin.right,
         selectedSources = new Set(),
 
         // x scale function
@@ -66,22 +66,6 @@ function totalBarChart() {
             .attr('font-size', '25')
             .text(right_label);
 
-        // add outline rectangle
-        svg.append('rect')
-            .classed('outline', true)
-            .attr('x', margin.left - 1)
-            .attr('y', margin.top - 1)
-            .attr('width', width - margin.left - margin.right + 2)
-            .attr('height', barHeight + 2);
-
-        // add scale TODO fix
-        svg.append("g")
-            .attr('transform', `translate(${margin.left},${margin.top + barHeight})`)
-            .call(d3.axisBottom(
-                d3.scaleBand()
-                    .domain(["0", "1/4", "1/2", "3/4", "1"])
-                    .range([0, width - margin.left - margin.right])));
-
         // add the remaining bar
         svg.append('rect')
             .classed("bar", true)
@@ -99,6 +83,22 @@ function totalBarChart() {
             .attr('y', margin.top)
             .attr('width', get_width(data))
             .attr('height', barHeight);
+
+        // add outline rectangle
+        svg.append('rect')
+            .classed('outline', true)
+            .attr('x', margin.left - 1)
+            .attr('y', margin.top - 1)
+            .attr('width', barWidth + 2)
+            .attr('height', barHeight + 2);
+
+        // add scale TODO fix
+        svg.append("g")
+            .attr('transform', `translate(${margin.left},${margin.top + barHeight})`)
+            .call(d3.axisBottom(
+                d3.scaleOrdinal()
+                    .domain(["0", "1/4", "1/2", "3/4", "1"])
+                    .range([0, barWidth / 4, barWidth / 2, barWidth * 3 / 4, barWidth])));
 
         return chart;
     }
