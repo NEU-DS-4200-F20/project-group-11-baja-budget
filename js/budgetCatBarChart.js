@@ -12,17 +12,16 @@ function budgetCatBarChart() {
 
         // null variables
         bars = null,
-        tooltip2 = null,
+        tooltip = null,
         categories = null,
         original_data = null,
-        selected_data = null,
 
         // y scale
         yScale = d3.scaleLinear()
             .domain([0, 100])
             .range([height - margin.bottom, margin.top]),
 
-        // todo comment
+        // returns a data object used for the visualizations
         get_selected_data = () => {
             let filtered = original_data
                     .filter(d => d.amount_spent !== 0 && selectedSources.has(d.source)),
@@ -35,7 +34,6 @@ function budgetCatBarChart() {
                 })
             } else {
                 return categories.map(c => {
-
                     let fraction = 0,
                         to_sum = filtered
                             .filter(d => c === d.category && d.amount_spent > 0)
@@ -44,7 +42,6 @@ function budgetCatBarChart() {
                     if (to_sum.length > 0) {
                         fraction = d3.sum(to_sum)
                     }
-
                     return {category: c, percent: fraction / total * 100}
                 });
             }
@@ -52,15 +49,13 @@ function budgetCatBarChart() {
 
 
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
-    // todo might not need funds
     function chart(selector, data, sources) {
 
         // set global variable
         original_data = data
         selectedSources = new Set(sources)
         categories = Array.from(new Set(data.map(d => d.category)))
-
-        selected_data = get_selected_data()
+        data = get_selected_data()
 
         // x scale
         let xScale = d3.scaleBand()
@@ -105,22 +100,15 @@ function budgetCatBarChart() {
             .attr("transform", "rotate(-90)")
             .text(yLabelText);
 
-        // todo this has to use selected data and be updated
+        // todo this has to use selected data and be updated, move style to css
         // define tooltips
-        tooltip2 = d3.select("#source-bar-chart")
-            .data(selected_data).enter()
-            .append("div")
-            .style("position", "absolute") // todo move to css
-            .style("visibility", "hidden")
-            .style("background-color", "white")
-            .style("border", "solid")
-            .style("border-width", "1px")
-            .style("border-radius", "5px")
-            .style("padding", "10px");
+        tooltip = d3.select("#source-bar-chart")
+            .data(data).enter()
+            .append("div");
 
         // append filled bars and save them in a variable
         bars = svg.selectAll(selector)
-            .data(selected_data).enter()
+            .data(data).enter()
             .append('rect');
 
         bars.attr('y', d => Math.ceil(yScale(d.percent)))
@@ -132,14 +120,14 @@ function budgetCatBarChart() {
 
         // Append outline rectangles
         svg.selectAll(selector)
-            .data(selected_data).enter()
+            .data(data).enter()
             .append('rect')
             .classed('outline', true)
             .attr('x', d => xScale(d.category) - 1)
             .attr('y', margin.top - 1)
             .attr('width', xScale.bandwidth() + 2)
             .attr('height', height - margin.top - margin.bottom + 2)
-        // todo these have to be updated
+        // todo review
         // .on("mouseout", () => tooltip2.style("visibility", "hidden"))
         // .on("mouseover", () => tooltip2.style("visibility", "visible"))
         // // function that change the tooltip when user hover / move / leave a cell
@@ -161,15 +149,10 @@ function budgetCatBarChart() {
         if (!arguments.length) return;
 
         selectedSources = sources
-        selected_data = get_selected_data() // todo no need to update this
-
         let data = {}
-        selected_data.forEach(d => {
+        get_selected_data().forEach(d => {
             data[d.category] = d.percent
         });
-
-        // todo fix this
-        // console.log(data)
         bars.attr('y', d => Math.ceil(yScale(data[d.category])))
             .attr('height', d => height - margin.bottom - Math.floor(yScale(data[d.category])))
     };

@@ -10,7 +10,7 @@ function sourceBarChart() {
 
         // empty variables
         bars = null,
-        tooltip2 = null,
+        tooltip = null,
         dispatcher = null,
         all_sources = new Set(),
         selectedSources = new Set(),
@@ -47,7 +47,6 @@ function sourceBarChart() {
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
     function chart(selector, data, sources) {
 
-        // todo make sure to add removing selection when click on nothing
         // set global variables
         selectedSources = new Set(sources);
         all_sources = new Set(sources);
@@ -109,21 +108,14 @@ function sourceBarChart() {
         svg.append('rect')
             .attr('width', width)
             .attr('height', height)
-            //.attr('fill', 'none')
             .on('click', () => updateSelection(null, null))
 
 
         // define tooltips
-        tooltip2 = d3.select("#budget-cat-chart")
+        tooltip = d3.select("#budget-cat-chart")
             .data(data).enter()
             .append("div")
-            .style("position", "absolute") // todo move to css
-            .style("visibility", "hidden")
-            .style("background-color", "white")
-            .style("border", "solid")
-            .style("border-width", "1px")
-            .style("border-radius", "5px")
-            .style("padding", "10px");
+            .classed('tooltip', true);
 
         // append and save filled bars
         bars = svg.selectAll(selector)
@@ -146,18 +138,18 @@ function sourceBarChart() {
             .attr('width', xScale.bandwidth() + 2)
             .attr('height', height - margin.top - margin.bottom + 2)
             .on('click', (event, d) => updateSelection(event, d))
-            .on("mouseout", () => tooltip2.style("visibility", "hidden"))
+            .on("mouseout", () => tooltip.style("visibility", "hidden"))
             .on("mouseover", (event, d) => {
                 if (!event.shiftKey) {
-                    return tooltip2.style("visibility", "visible")
+                    return tooltip.style("visibility", "visible")
                 } else {
-                    return tooltip2.style("visibility", "hidden")
+                    return tooltip.style("visibility", "hidden")
                 }
             })
             // function that change the tooltip when user hover / move / leave a cell
             .on("mousemove", (event, d) => {
                 if (!event.shiftKey) {
-                    return tooltip2
+                    return tooltip
                         .html(""
                             + "<p><b>Funding Source: "
                             + d.source
@@ -169,7 +161,7 @@ function sourceBarChart() {
                         .style("left", (event.pageX) + "px")
                         .style("top", (event.pageY - 150) + "px")
                 } else {
-                    tooltip2.style("visibility", "hidden")
+                    tooltip.style("visibility", "hidden")
                 }
             });
 
