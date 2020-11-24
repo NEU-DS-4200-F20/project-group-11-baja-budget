@@ -1,7 +1,6 @@
 function budgetCatBarChart() {
 
-    // Based on Mike Bostock's margin convention
-    // https://bl.ocks.org/mbostock/3019563
+    // Based on Mike Bostock's margin convention https://bl.ocks.org/mbostock/3019563
     let margin = {top: 60, left: 50, right: 30, bottom: 50},
         width = 700 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom,
@@ -52,7 +51,6 @@ function budgetCatBarChart() {
         // set global variable
         original_data = data
         selectedSources = new Set(sources)
-        // TODO why does this throw an error sometimes
         categories = Array.from(new Set(data.map(d => d.category)))
         data = get_selected_data()
 
@@ -105,7 +103,6 @@ function budgetCatBarChart() {
             .attr("transform", "rotate(-90)")
             .text(yLabelText);
 
-        // todo this has to use selected data and be updated, move style to css
         // define tooltips
         tooltip = d3.select(selector)
             .data(data).enter()

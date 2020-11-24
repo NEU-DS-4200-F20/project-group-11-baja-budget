@@ -45,15 +45,16 @@ function sourceBarChart() {
         };
 
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
-    function chart(selector, data, sources) {
+    function chart(selector, data, sources, sort) {
 
         // set global variables
         selectedSources = new Set(sources);
         all_sources = new Set(sources);
 
-        // todo decide if want to keep
         // sort data in descending order of the percent remaining
-        // data.sort((a, b) => d3.descending(percent_remaining(a), percent_remaining(b)))
+        if (sort) {
+            data.sort((a, b) => d3.descending(percent_remaining(a), percent_remaining(b)));
+        }
 
         // x scale
         let xScale = d3.scaleBand()
