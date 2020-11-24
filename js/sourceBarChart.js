@@ -31,8 +31,7 @@ function sourceBarChart() {
             } else if (event.shiftKey) {
                 if (selectedSources.size === all_sources.size) {
                     selectedSources = new Set([d.source])
-                }
-                else if (selectedSources.size > 1 && selectedSources.has(d.source)) {
+                } else if (selectedSources.size > 1 && selectedSources.has(d.source)) {
                     selectedSources.delete(d.source)
                 } else {
                     selectedSources.add(d.source)
@@ -102,7 +101,7 @@ function sourceBarChart() {
         svg.append('text')
             .classed('axes-label', true)
             .attr('y', margin.left / 2)
-            .attr('x', - (height + margin.bottom) / 2)
+            .attr('x', -(height + margin.bottom) / 2)
             .attr("transform", "rotate(-90)")
             .text(yLabelText);
 
@@ -148,19 +147,32 @@ function sourceBarChart() {
             .attr('height', height - margin.top - margin.bottom + 2)
             .on('click', (event, d) => updateSelection(event, d))
             .on("mouseout", () => tooltip2.style("visibility", "hidden"))
-            .on("mouseover", () => tooltip2.style("visibility", "visible"))
+            .on("mouseover", (event, d) => {
+                if (!event.shiftKey) {
+                    return tooltip2.style("visibility", "visible")
+                } else {
+                    return tooltip2.style("visibility", "hidden")
+                }
+            })
             // function that change the tooltip when user hover / move / leave a cell
-            .on("mousemove", (event, d) => tooltip2
-                .html(""
-                    + "<p><b>Funding Source: "
-                    + d.source
-                    + "</b><br>Amount Spent: "
-                    + d.amount_spent
-                    + "<br>Amount Remaining: "
-                    + Math.round((d.total_amount - d.amount_spent) * 100) / 100
-                    + "</p>")
-                .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY - 150) + "px"));
+            .on("mousemove", (event, d) => {
+                if (!event.shiftKey) {
+                    return tooltip2
+                        .html(""
+                            + "<p><b>Funding Source: "
+                            + d.source
+                            + "</b><br>Amount Spent: "
+                            + d.amount_spent
+                            + "<br>Amount Remaining: "
+                            + Math.round((d.total_amount - d.amount_spent) * 100) / 100
+                            + "</p>")
+                        .style("left", (event.pageX) + "px")
+                        .style("top", (event.pageY - 150) + "px")
+                } else {
+                    tooltip2.style("visibility", "hidden")
+                }
+            });
+
 
         return chart;
     }
