@@ -10,6 +10,8 @@ function totalBarChart() {
         barHeight = height - margin.top - margin.bottom,
         barWidth = width - margin.left - margin.right,
         selectedSources = new Set(),
+        transitionBuild = 1000,
+        transitionInProgress = 1000,
 
         // x scale function
         xScale = d3.scaleLinear()
@@ -31,6 +33,10 @@ function totalBarChart() {
 
         // function returns the width of the selected rectangle
         get_width = data => Math.ceil(xScale(percent_selected(data))),
+
+        // null variables
+        barS = null,
+        barR = null,
         originalData = null;
 
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
@@ -39,10 +45,10 @@ function totalBarChart() {
         // define view box and scg object
         let svg = d3.select(selector)
             .append('svg')
-            .attr('viewBox', [0, 0, width + margin.left + margin.right, height].join(' '))
+            .attr('viewBox', [0, 0, width + margin.left + margin.right, height].join(' '));
 
         // save data to global constant, set selected sources to include all sources
-        originalData = data
+        originalData = data;
         selectedSources = new Set(sources);
 
         // add labels
@@ -66,6 +72,23 @@ function totalBarChart() {
             .attr('font-size', '25')
             .text(right_label);
 
+        // add the remaining bar, save to variable
+        barR = svg.append('rect')
+            .classed("bar", true)
+            .attr('x', margin.left)
+            .attr('y', margin.top)
+            .attr('width', 0)
+            .attr('height', barHeight);
+
+        // add the selected rectangle, save to variable
+        barS = svg.append('rect')
+            .classed("bar", true)
+            .classed("selected", true)
+            .attr('x', margin.left)
+            .attr('y', margin.top)
+            .attr('width', 0)
+            .attr('height', barHeight);
+
         // add outline rectangle
         svg.append('rect')
             .classed('outline', true)
@@ -74,53 +97,26 @@ function totalBarChart() {
             .attr('width', barWidth + 2)
             .attr('height', barHeight + 2);
 
-        // add the remaining bar
-        let remaining = svg.append('rect')
-            .classed("bar", true)
-            .attr('x', margin.left)
-            .attr('y', margin.top)
-            .attr('width', 0)
-            .attr('height', barHeight),
-
-        // add the selected rectangle
-        selected = svg.append('rect')
-            .classed("bar", true)
-            .classed("total", true)
-            .classed("selected", true)
-            .attr('x', margin.left)
-            .attr('y', margin.top)
-            .attr('width', 0)
-            .attr('height', barHeight);
-
-        selected
-            .transition()
-            .duration(1000)
-            .attr('width', get_width(data));
-
-        remaining
-            .transition()
-            .duration(1000)
-            .attr('width', get_width(data));
-
         // add scale
         svg.append("g")
             .attr('transform', `translate(${margin.left},${margin.top + barHeight + 1})`)
-            .call(d3.axisBottom(
-                d3.scaleOrdinal()
-                    .domain(["0", "1/4", "1/2", "3/4", "1"])
-                    .range([0, barWidth / 4, barWidth / 2, barWidth * 3 / 4, barWidth])));
+            .call(d3.axisBottom(d3.scaleOrdinal().domain(["0", "1/4", "1/2", "3/4", "1"])
+                .range([0, barWidth / 4, barWidth / 2, barWidth * 3 / 4, barWidth])));
+
+        // add transitions
+        barS.transition().duration(transitionBuild).attr('width', get_width(data));
+        barR.transition().duration(transitionBuild).attr('width', get_width(data));
 
         return chart;
     }
 
     // Given selected data from another visualization select the relevant elements here (linking)
     chart.updateSelection = function (selectedData) {
-        if (!arguments.length) return;
-        selectedSources = selectedData
-        d3.selectAll("rect.total")
-            .transition()
-            .duration(500)
-            .attr('width', get_width(originalData));
+        if (!arguments.length) {
+            return;
+        }
+        selectedSources = selectedData;
+        barS.transition().duration(transitionInProgress).attr('width', get_width(originalData));
     };
 
     return chart;

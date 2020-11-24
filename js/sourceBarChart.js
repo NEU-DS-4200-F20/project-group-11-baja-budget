@@ -27,21 +27,21 @@ function sourceBarChart() {
         // Updates the selected sources and calls dispatcher
         updateSelection = function (event, d) {
             if (d == null || !d.hasOwnProperty('source')) {
-                selectedSources = new Set(all_sources)
+                selectedSources = new Set(all_sources);
             } else if (event.shiftKey) {
                 if (selectedSources.size === all_sources.size) {
-                    selectedSources = new Set([d.source])
+                    selectedSources = new Set([d.source]);
                 } else if (selectedSources.size > 1 && selectedSources.has(d.source)) {
-                    selectedSources.delete(d.source)
+                    selectedSources.delete(d.source);
                 } else {
-                    selectedSources.add(d.source)
+                    selectedSources.add(d.source);
                 }
             } else {
-                selectedSources = new Set([d.source])
+                selectedSources = new Set([d.source]);
             }
-            bars.classed("selected", d => isSelected(d.source))
             // Get the name of our dispatcher's event, Let other charts know
             dispatcher.call(Object.getOwnPropertyNames(dispatcher._)[0], this, selectedSources);
+            bars.classed("selected", d => isSelected(d.source));
         };
 
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
@@ -114,7 +114,7 @@ function sourceBarChart() {
         svg.append('rect')
             .attr('width', width)
             .attr('height', height)
-            .on('click', () => updateSelection(null, null))
+            .on('click', () => updateSelection(null, null));
 
         // define tooltips
         tooltip = d3.select(selector)
@@ -122,8 +122,7 @@ function sourceBarChart() {
             .append("div")
             .classed('tooltip', true);
 
-        // todo animate transition
-        // append and save filled bars
+        // append and save filled bars, save variable
         bars = svg.selectAll(selector)
             .data(data).enter()
             .append('rect')
@@ -145,18 +144,17 @@ function sourceBarChart() {
             .attr('height', height - margin.top - margin.bottom + 2)
             .on('click', (event, d) => updateSelection(event, d))
             .on("mouseout", () => {
-                overSet = new Set()
-                dispatch.call('mouseover')
-                tooltip.style("visibility", "hidden")
+                overSet = new Set();
+                dispatch.call('mouseover');
+                tooltip.style("visibility", "hidden");
             })
             .on("mouseover", (event, d) => {
-                overSet = new Set([d.source])
-                dispatch.call('mouseover')
+                overSet = new Set([d.source]);
+                dispatch.call('mouseover');
                 if (!event.shiftKey) {
-                    return tooltip.style("visibility", "visible")
-                } else {
-                    return tooltip.style("visibility", "hidden")
+                    return tooltip.style("visibility", "visible");
                 }
+                return tooltip.style("visibility", "hidden");
             })
             // function that change the tooltip when user hover / move / leave a cell
             .on("mousemove", (event, d) => {
@@ -171,15 +169,15 @@ function sourceBarChart() {
                             + Math.round((d.total_amount - d.amount_spent) * 100) / 100
                             + "</p>")
                         .style("left", (event.pageX) + "px")
-                        .style("top", (event.pageY - 150) + "px")
+                        .style("top", (event.pageY - 150) + "px");
                 } else {
-                    tooltip.style("visibility", "hidden")
+                    tooltip.style("visibility", "hidden");
                 }
             });
 
         // when mouseover is called, updates the class of the bars
         dispatch.on('mouseover', () => {
-            bars.classed('mouseover', d => overSet.has(d.source))
+            bars.classed('mouseover', d => overSet.has(d.source));
         });
 
         // transitions
@@ -188,14 +186,14 @@ function sourceBarChart() {
             .attr('y', d => height + 10 - Math.ceil(yScale(percent_spent(d))))
             .attr('height', d => height - margin.bottom - Math.floor(yScale(percent_remaining(d))));
 
-
         return chart;
     }
 
-
     // Gets or sets the dispatcher we use for selection events
     chart.selectionDispatcher = function (_) {
-        if (!arguments.length) return dispatcher;
+        if (!arguments.length) {
+            return dispatcher;
+        }
         dispatcher = _;
         return chart;
     };
