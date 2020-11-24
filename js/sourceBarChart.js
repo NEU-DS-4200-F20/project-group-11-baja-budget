@@ -117,7 +117,7 @@ function sourceBarChart() {
             .on('click', () => updateSelection(null, null))
 
         // define tooltips
-        tooltip = d3.select("#budget-cat-chart")
+        tooltip = d3.select(selector)
             .data(data).enter()
             .append("div")
             .classed('tooltip', true);

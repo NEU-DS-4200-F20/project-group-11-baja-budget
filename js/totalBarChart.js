@@ -94,7 +94,7 @@ function totalBarChart() {
 
         // add scale
         svg.append("g")
-            .attr('transform', `translate(${margin.left},${margin.top + barHeight})`)
+            .attr('transform', `translate(${margin.left},${margin.top + barHeight + 1})`)
             .call(d3.axisBottom(
                 d3.scaleOrdinal()
                     .domain(["0", "1/4", "1/2", "3/4", "1"])

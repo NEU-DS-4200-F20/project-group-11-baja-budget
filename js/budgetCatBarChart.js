@@ -108,7 +108,7 @@ function budgetCatBarChart() {
 
         // todo this has to use selected data and be updated, move style to css
         // define tooltips
-        tooltip = d3.select("#source-bar-chart")
+        tooltip = d3.select(selector)
             .data(data).enter()
             .append("div")
             .classed('tooltip', true);
@@ -133,7 +133,6 @@ function budgetCatBarChart() {
             .attr('y', margin.top - 1)
             .attr('width', xScale.bandwidth() + 2)
             .attr('height', height - margin.top - margin.bottom + 2)
-        // todo review
         .on("mouseout", () => {
             overSet = new Set()
             dispatch.call('mouseover')
