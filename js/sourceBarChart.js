@@ -70,7 +70,13 @@ function sourceBarChart() {
             svg = d3.select(selector)
                 .append('svg')
                 .attr('viewBox', [0, 0, width + margin.left + margin.right,
-                    height + margin.bottom].join(' '));
+                    height + margin.bottom].join(' ')),
+
+            // define a set to keep track of the mouseover bar
+            overSet = new Set(),
+
+            // create custom dispatch events
+            dispatch = d3.dispatch("mouseover");
 
         // append title
         svg.append("text")
@@ -171,16 +177,10 @@ function sourceBarChart() {
                 }
             });
 
-        // define a set to keep track of the mouseover bar
-        let overSet = new Set(),
-            // create custom dispatch events
-            dispatch = d3.dispatch("mouseover");
-
         // when mouseover is called, updates the class of the bars
         dispatch.on('mouseover', () => {
             bars.classed('mouseover', d => overSet.has(d.source))
         });
-
 
         return chart;
     }

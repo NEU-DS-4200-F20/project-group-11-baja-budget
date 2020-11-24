@@ -7,7 +7,7 @@ function totalBarChart() {
         title = 'Total Remaining Budget (%)',
         left_label = "E",
         right_label = "F",
-        barHeight = 100,
+        barHeight = (height - margin.top - margin.bottom),
         halfBarHeight = barHeight / 2,
         selectedSources = new Set(),
 
@@ -55,30 +55,38 @@ function totalBarChart() {
         svg.append("text")
             .classed('chart-title', true)
             .attr('x', margin.left - 20)
-            .attr('y', height / 2)
-            .attr('font-size', '30')
+            .attr('y', margin.top + barHeight / 2 + 25 / 2)
+            .attr('font-size', '25')
             .text(left_label);
 
         svg.append("text")
             .classed('chart-title', true)
             .attr('x', width - margin.right + 15)
-            .attr('y', height / 2)
-            .attr('font-size', '30')
+            .attr('y', margin.top + barHeight / 2 + 25 / 2)
+            .attr('font-size', '25')
             .text(right_label);
 
         // add outline rectangle
         svg.append('rect')
             .classed('outline', true)
             .attr('x', margin.left - 1)
-            .attr('y', height / 2 - halfBarHeight - 1)
-            .attr('width', width - margin.left - margin.right)
+            .attr('y', margin.top - 1)
+            .attr('width', width - margin.left - margin.right + 2)
             .attr('height', barHeight + 2);
+
+        // add scale TODO fix
+        svg.append("g")
+            .attr('transform', `translate(${margin.left},${margin.top + barHeight})`)
+            .call(d3.axisBottom(
+                d3.scaleBand()
+                    .domain(["0", "1/4", "1/2", "3/4", "1"])
+                    .range([0, width - margin.left - margin.right])));
 
         // add the remaining bar
         svg.append('rect')
             .classed("bar", true)
             .attr('x', margin.left)
-            .attr('y', height / 2 - halfBarHeight)
+            .attr('y', margin.top)
             .attr('width', get_width(data))
             .attr('height', barHeight);
 
@@ -88,7 +96,7 @@ function totalBarChart() {
             .classed("total", true)
             .classed("selected", true)
             .attr('x', margin.left)
-            .attr('y', height / 2 - halfBarHeight)
+            .attr('y', margin.top)
             .attr('width', get_width(data))
             .attr('height', barHeight);
 
