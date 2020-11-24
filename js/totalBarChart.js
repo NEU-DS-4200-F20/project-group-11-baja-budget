@@ -4,19 +4,20 @@ function totalBarChart() {
     let margin = {top: 60, left: 50, right: 30, bottom: 50},
         width = 700 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom,
-        title = 'Total Remaining Budget',
-        left_label = "E",
-        right_label = "F",
         barHeight = height - margin.top - margin.bottom,
         barWidth = width - margin.left - margin.right,
-        selectedSources = new Set(),
+
+        // labels
+        left_label = "E",
+        right_label = "F",
+        title = 'Total Remaining Budget',
+
+        // transition speed
         transitionBuild = 1000,
-        transitionInProgress = 1000,
+        transitionInProgress = 500,
 
         // x scale function
-        xScale = d3.scaleLinear()
-            .domain([0, 100])
-            .range([0, width]),
+        xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
 
         // function that returns whether selected sources contains the given string
         isSelected = d => selectedSources.has(d),
@@ -34,10 +35,11 @@ function totalBarChart() {
         // function returns the width of the selected rectangle
         get_width = data => Math.ceil(xScale(percent_selected(data))),
 
-        // null variables
+        // null or empty variables
         barS = null,
         barR = null,
-        originalData = null;
+        originalData = null,
+        selectedSources = new Set();
 
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
     function chart(selector, data, sources) {

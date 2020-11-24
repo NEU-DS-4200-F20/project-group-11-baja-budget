@@ -4,21 +4,25 @@ function budgetCatBarChart() {
     let margin = {top: 60, left: 50, right: 30, bottom: 50},
         width = 700 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom,
-        selectedSources = new Set(),
+
+        // labels
         title = 'Percent of Total Spent by Budget Category (%)',
         xLabelText = 'Budget Category',
         yLabelText = 'Percent Spent',
 
-        // null variables
+        // transition speed
+        transitionBuild = 1000,
+        transitionInProgress = 500,
+
+        // null or empty variables
         bars = null,
         tooltip = null,
         categories = null,
         original_data = null,
+        selectedSources = new Set(),
 
         // y scale
-        yScale = d3.scaleLinear()
-            .domain([0, 100])
-            .range([height - margin.bottom, margin.top]),
+        yScale = d3.scaleLinear().domain([0, 100]).range([height - margin.bottom, margin.top]),
 
         // returns a data object used for the visualizations
         get_selected_data = () => {
@@ -155,7 +159,7 @@ function budgetCatBarChart() {
 
         // transitions
         bars.transition()
-            .duration(1000)
+            .duration(transitionBuild)
             .attr('y', d => Math.ceil(yScale(d.percent)))
             .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)));
 
@@ -170,7 +174,7 @@ function budgetCatBarChart() {
         tooltip.data(selected_data).enter() // TODO why does this not work
         bars.data(selected_data)
             .transition()
-            .duration(500)
+            .duration(transitionInProgress)
             .attr('y', d => Math.ceil(yScale(d.percent)))
             .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)))
     };

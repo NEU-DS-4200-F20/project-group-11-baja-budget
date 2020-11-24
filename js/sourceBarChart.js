@@ -4,11 +4,16 @@ function sourceBarChart() {
     let margin = {top: 60, left: 50, right: 30, bottom: 50},
         width = 700 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom,
+
+        // labels
         title = 'Percent Remaining by Funding Source (%)',
         xLabelText = 'Funding Source',
         yLabelText = 'Percent Remaining',
 
-        // empty variables
+        // transition speed
+        transitionBuild = 1000,
+
+        // null or empty variables
         bars = null,
         tooltip = null,
         dispatcher = null,
@@ -183,7 +188,7 @@ function sourceBarChart() {
 
         // transitions
         bars.transition()
-            .duration(1000)
+            .duration(transitionBuild)
             .attr('y', d => height + 10 - Math.ceil(yScale(percent_spent(d))))
             .attr('height', d => height - margin.bottom - Math.floor(yScale(percent_remaining(d))));
 
