@@ -2,7 +2,7 @@
 ((() => {
 
     // open webpage on a specific location
-    window.scroll(0, 610)
+    window.scroll(0, 625)
 
     // read first csv file
     d3.csv('data/budget.csv').then(function (second_data) {
