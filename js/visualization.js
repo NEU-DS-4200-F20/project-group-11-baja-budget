@@ -23,8 +23,7 @@
             d.amount_spent = +d.amount_spent;
         });
 
-        // General event type for selections, used by d3-dispatch
-        // https://github.com/d3/d3-dispatch
+        // General event type for selections, used by d3-dispatch https://github.com/d3/d3-dispatch
         let dispatchString = 'selectionUpdated',
 
             // get list of all sources
@@ -41,7 +40,7 @@
 
             // budget category chart
             budget_category = budgetCatBarChart()
-            ('#budget-cat-chart', data, second_data, sources);
+            ('#budget-cat-chart', second_data, sources);
 
         // When the source chart selection is updated via clicks or brushing,
         // tell the scatterplot and table to update it's selection (linking)
