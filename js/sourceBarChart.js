@@ -124,7 +124,6 @@ function sourceBarChart() {
 
         // define tooltips
         tooltip = d3.select(selector)
-            .data(data).enter()
             .append("div")
             .classed('tooltip', true);
 
@@ -172,8 +171,7 @@ function sourceBarChart() {
                             + "</b><br>Amount Spent: "
                             + d.amount_spent
                             + "<br>Amount Remaining: "
-                            + Math.round((d.total_amount - d.amount_spent) * 100) / 100
-                            + "</p>")
+                            + Math.round((d.total_amount - d.amount_spent) * 100) / 100)
                         .style("left", (event.pageX) + "px")
                         .style("top", (event.pageY - 150) + "px");
                 } else {

@@ -16,11 +16,14 @@ function totalBarChart() {
         transitionBuild = 1000,
         transitionInProgress = 500,
 
+        // null or empty variables
+        barS = null,
+        barR = null,
+        originalData = null,
+        selectedSources = new Set(),
+
         // x scale function
         xScale = d3.scaleLinear().domain([0, 100]).range([0, width]),
-
-        // function that returns whether selected sources contains the given string
-        isSelected = d => selectedSources.has(d),
 
         // function returns the sum of percents of selected sources
         percent_selected = function (data) {
@@ -28,30 +31,28 @@ function totalBarChart() {
                 .domain([0, d3.sum(data, d => d.total_amount)])
                 .range([0, 100])
             return d3.sum(data
-                .filter(d => isSelected(d.source))
+                .filter(d => selectedSources.has(d.source))
                 .map(d => percent(d.total_amount - d.amount_spent)));
         },
 
         // function returns the width of the selected rectangle
-        get_width = data => Math.ceil(xScale(percent_selected(data))),
-
-        // null or empty variables
-        barS = null,
-        barR = null,
-        originalData = null,
-        selectedSources = new Set();
+        get_width = data => Math.ceil(xScale(percent_selected(data)));
 
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
     function chart(selector, data, sources) {
 
-        // define view box and scg object
-        let svg = d3.select(selector)
-            .append('svg')
-            .attr('viewBox', [0, 0, width + margin.left + margin.right, height].join(' '));
-
         // save data to global constant, set selected sources to include all sources
         originalData = data;
         selectedSources = new Set(sources);
+
+        // define variables
+        let total = d3.sum(data, d => d.total_amount),
+            remaining = total - d3.sum(data, d => d.amount_spent),
+
+            // define view box and svg object
+            svg = d3.select(selector)
+                .append('svg')
+                .attr('viewBox', [0, 0, width + margin.left + margin.right, height].join(' '));
 
         // add labels
         svg.append("text")
@@ -73,6 +74,10 @@ function totalBarChart() {
             .attr('y', margin.top + barHeight / 2 + 25 / 2)
             .attr('font-size', '25')
             .text(right_label);
+
+        let tooltip = d3.select(selector)
+            .append("div")
+            .classed('tooltip', true);
 
         // add the remaining bar, save to variable
         barR = svg.append('rect')
@@ -97,7 +102,19 @@ function totalBarChart() {
             .attr('x', margin.left - 1)
             .attr('y', margin.top - 1)
             .attr('width', barWidth + 2)
-            .attr('height', barHeight + 2);
+            .attr('height', barHeight + 2)
+            .on("mouseout", () => tooltip.style("visibility", "hidden"))
+            .on("mouseover", () => tooltip.style("visibility", "visible"))
+            // function that change the tooltip when user hover / move / leave a cell
+            .on("mousemove", (event) => tooltip
+                .html(""
+                    + "Budget Total: "
+                    + total
+                    + "<br>Amount Remaining: "
+                    + Math.round((total - remaining) * 100 / 100))
+                .style("left", (event.pageX) + "px")
+                .style("top", (event.pageY - 150) + "px")
+            );
 
         // add scale
         svg.append("g")
