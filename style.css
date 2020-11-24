@@ -80,11 +80,11 @@ rect.outline {
 }
 
 rect.bar.mouseover {
-    fill: lightgreen;
+    fill: darkgray;
 }
 
 rect.bar.selected.mouseover {
-    fill: lightpink;
+    fill: #b0c4de;
 }
 
 
