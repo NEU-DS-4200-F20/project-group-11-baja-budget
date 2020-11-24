@@ -92,7 +92,7 @@ function totalBarChart() {
             .attr('width', barWidth + 2)
             .attr('height', barHeight + 2);
 
-        // add scale TODO fix
+        // add scale
         svg.append("g")
             .attr('transform', `translate(${margin.left},${margin.top + barHeight})`)
             .call(d3.axisBottom(

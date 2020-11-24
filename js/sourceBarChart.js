@@ -161,7 +161,7 @@ function sourceBarChart() {
             // function that change the tooltip when user hover / move / leave a cell
             .on("mousemove", (event, d) => {
                 if (!event.shiftKey) {
-                    return tooltip
+                    tooltip
                         .html(""
                             + "<p><b>Funding Source: "
                             + d.source
@@ -173,7 +173,7 @@ function sourceBarChart() {
                         .style("left", (event.pageX) + "px")
                         .style("top", (event.pageY - 150) + "px")
                 } else {
-                    return tooltip.style("visibility", "hidden")
+                    tooltip.style("visibility", "hidden")
                 }
             });
 

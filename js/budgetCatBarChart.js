@@ -66,7 +66,13 @@ function budgetCatBarChart() {
             // define svg
             svg = d3.select(selector)
                 .append('svg')
-                .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.bottom].join(' '));
+                .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.bottom].join(' ')),
+
+            // define a set to keep track of the mouseover bar
+            overSet = new Set(),
+
+            // create custom dispatch events
+            dispatch = d3.dispatch("mouseover");
 
         // append title
         svg.append("text")
@@ -104,7 +110,8 @@ function budgetCatBarChart() {
         // define tooltips
         tooltip = d3.select("#source-bar-chart")
             .data(data).enter()
-            .append("div");
+            .append("div")
+            .classed('tooltip', true);
 
         // append filled bars and save them in a variable
         bars = svg.selectAll(selector)
@@ -127,18 +134,31 @@ function budgetCatBarChart() {
             .attr('width', xScale.bandwidth() + 2)
             .attr('height', height - margin.top - margin.bottom + 2)
         // todo review
-        // .on("mouseout", () => tooltip2.style("visibility", "hidden"))
-        // .on("mouseover", () => tooltip2.style("visibility", "visible"))
-        // // function that change the tooltip when user hover / move / leave a cell
-        // .on("mousemove", (event, d) => tooltip2
-        //     .html(""
-        //         + "<p><b>Budget Category: "
-        //         + d.category
-        //         + "</b><br>Proportion of Total Amount Spent: "
-        //         + Math.round((d.percent) * 100) / 100
-        //         + "%</p>")
-        //     .style("left", (event.pageX) + "px")
-        //     .style("top", (event.pageY - 150) + "px"));
+        .on("mouseout", () => {
+            overSet = new Set()
+            dispatch.call('mouseover')
+            tooltip.style("visibility", "hidden")
+        })
+        .on("mouseover", (event, d) => {
+            overSet = new Set([d.category])
+            dispatch.call('mouseover')
+            tooltip.style("visibility", "visible")
+        })
+        // function that change the tooltip when user hover / move / leave a cell
+        .on("mousemove", (event, d) => tooltip
+            .html(""
+                + "<p><b>Budget Category: "
+                + d.category
+                + "</b><br>Proportion of Total Amount Spent: "
+                + Math.round((d.percent) * 100) / 100
+                + "%</p>")
+            .style("left", (event.pageX) + "px")
+            .style("top", (event.pageY - 150) + "px"));
+
+        // when mouseover is called, updates the class of the bars
+        dispatch.on('mouseover', () => {
+            bars.classed('mouseover', d => overSet.has(d.category))
+        });
 
         return chart;
     }
@@ -147,10 +167,11 @@ function budgetCatBarChart() {
     chart.updateSelection = function (sources) {
         if (!arguments.length) return;
         selectedSources = sources
-        let data = {}
-        get_selected_data().forEach(d => data[d.category] = d.percent);
-        bars.attr('y', d => Math.ceil(yScale(data[d.category])))
-            .attr('height', d => height - margin.bottom - Math.floor(yScale(data[d.category])))
+        let selected_data = get_selected_data()
+        tooltip.data(selected_data) // TODO why does this not work
+        bars.data(selected_data)
+            .attr('y', d => Math.ceil(yScale(d.percent)))
+            .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)))
     };
 
     return chart;
