@@ -66,24 +66,6 @@ function totalBarChart() {
             .attr('font-size', '25')
             .text(right_label);
 
-        // add the remaining bar
-        svg.append('rect')
-            .classed("bar", true)
-            .attr('x', margin.left)
-            .attr('y', margin.top)
-            .attr('width', get_width(data))
-            .attr('height', barHeight);
-
-        // add the selected rectangle
-        svg.append('rect')
-            .classed("bar", true)
-            .classed("total", true)
-            .classed("selected", true)
-            .attr('x', margin.left)
-            .attr('y', margin.top)
-            .attr('width', get_width(data))
-            .attr('height', barHeight);
-
         // add outline rectangle
         svg.append('rect')
             .classed('outline', true)
@@ -91,6 +73,34 @@ function totalBarChart() {
             .attr('y', margin.top - 1)
             .attr('width', barWidth + 2)
             .attr('height', barHeight + 2);
+
+        // add the remaining bar
+        let remaining = svg.append('rect')
+            .classed("bar", true)
+            .attr('x', margin.left)
+            .attr('y', margin.top)
+            .attr('width', 0)
+            .attr('height', barHeight),
+
+        // add the selected rectangle
+        selected = svg.append('rect')
+            .classed("bar", true)
+            .classed("total", true)
+            .classed("selected", true)
+            .attr('x', margin.left)
+            .attr('y', margin.top)
+            .attr('width', 0)
+            .attr('height', barHeight);
+
+        selected
+            .transition()
+            .duration(1000)
+            .attr('width', get_width(data));
+
+        remaining
+            .transition()
+            .duration(1000)
+            .attr('width', get_width(data));
 
         // add scale
         svg.append("g")
@@ -108,7 +118,8 @@ function totalBarChart() {
         if (!arguments.length) return;
         selectedSources = selectedData
         d3.selectAll("rect.total")
-            .attr('x', margin.left)
+            .transition()
+            .duration(500)
             .attr('width', get_width(originalData));
     };
 

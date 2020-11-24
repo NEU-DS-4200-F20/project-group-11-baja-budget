@@ -36,11 +36,6 @@ h1, h2, h3 {
     background-color: #f4f1f0;
 }
 
-/*
-todo make css for axis and graph labels and titles
- */
-
-
 svg text {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -86,7 +81,6 @@ rect.bar.mouseover {
 rect.bar.selected.mouseover {
     fill: #b0c4de;
 }
-
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
 #forkongithub a {

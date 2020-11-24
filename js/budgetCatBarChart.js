@@ -54,6 +54,7 @@ function budgetCatBarChart() {
         // set global variable
         original_data = data
         selectedSources = new Set(sources)
+        // TODO why does this throw an error sometimes
         categories = Array.from(new Set(data.map(d => d.category)))
         data = get_selected_data()
 
@@ -120,9 +121,9 @@ function budgetCatBarChart() {
             .classed('bar', true)
             .classed('selected', true)
             .attr('x', d => xScale(d.category))
-            .attr('y', d => Math.ceil(yScale(d.percent)))
+            .attr('y', height - margin.bottom)
             .attr('width', xScale.bandwidth())
-            .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)));
+            .attr('height', 0);
 
         // Append outline rectangles
         svg.selectAll(selector)
@@ -159,6 +160,13 @@ function budgetCatBarChart() {
             bars.classed('mouseover', d => overSet.has(d.category))
         });
 
+        // transitions
+        bars.transition()
+            .duration(1000)
+            .attr('y', d => Math.ceil(yScale(d.percent)))
+            .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)));
+
+
         return chart;
     }
 
@@ -169,6 +177,8 @@ function budgetCatBarChart() {
         let selected_data = get_selected_data()
         tooltip.data(selected_data).enter() // TODO why does this not work
         bars.data(selected_data)
+            .transition()
+            .duration(500)
             .attr('y', d => Math.ceil(yScale(d.percent)))
             .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)))
     };

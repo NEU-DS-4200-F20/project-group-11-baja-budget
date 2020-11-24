@@ -130,9 +130,9 @@ function sourceBarChart() {
             .classed('bar', true)
             .classed('selected', true)
             .attr('x', d => xScale(d.source))
-            .attr('y', d => height + 10 - Math.ceil(yScale(percent_spent(d))))
+            .attr('y', height - margin.bottom)
             .attr('width', xScale.bandwidth())
-            .attr('height', d => height - margin.bottom - Math.floor(yScale(percent_remaining(d))));
+            .attr('height', 0);
 
         // Append outline rectangles
         svg.selectAll(selector)
@@ -181,6 +181,13 @@ function sourceBarChart() {
         dispatch.on('mouseover', () => {
             bars.classed('mouseover', d => overSet.has(d.source))
         });
+
+        // transitions
+        bars.transition()
+            .duration(1000)
+            .attr('y', d => height + 10 - Math.ceil(yScale(percent_spent(d))))
+            .attr('height', d => height - margin.bottom - Math.floor(yScale(percent_remaining(d))));
+
 
         return chart;
     }
