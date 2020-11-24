@@ -1,6 +1,9 @@
 // Immediately Invoked Function Expression to limit access to our variables
 ((() => {
 
+    // open webpage on a specific location
+    window.scroll(0, 610)
+
     // read first csv file
     d3.csv('data/budget.csv').then(function (second_data) {
         // convert data in total amount and amount spent columns to integers
