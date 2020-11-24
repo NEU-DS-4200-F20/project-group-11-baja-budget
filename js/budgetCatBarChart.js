@@ -2,7 +2,7 @@ function budgetCatBarChart() {
 
     // Based on Mike Bostock's margin convention
     // https://bl.ocks.org/mbostock/3019563
-    let margin = {top: 60, left: 50, right: 30, bottom: 30},
+    let margin = {top: 60, left: 50, right: 30, bottom: 50},
         width = 700 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom,
         selectedSources = new Set(),
@@ -168,7 +168,7 @@ function budgetCatBarChart() {
         if (!arguments.length) return;
         selectedSources = sources
         let selected_data = get_selected_data()
-        tooltip.data(selected_data) // TODO why does this not work
+        tooltip.data(selected_data).enter() // TODO why does this not work
         bars.data(selected_data)
             .attr('y', d => Math.ceil(yScale(d.percent)))
             .attr('height', d => height - margin.bottom - Math.floor(yScale(d.percent)))

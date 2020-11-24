@@ -1,7 +1,7 @@
 function sourceBarChart() {
 
     // Based on Mike Bostock's margin convention https://bl.ocks.org/mbostock/3019563
-    let margin = {top: 60, left: 75, right: 30, bottom: 30},
+    let margin = {top: 60, left: 50, right: 30, bottom: 50},
         width = 700 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom,
         title = 'Percent Remaining by Funding Source (%)',
@@ -105,8 +105,8 @@ function sourceBarChart() {
         // append y axis label
         svg.append('text')
             .classed('axes-label', true)
-            .attr('y', margin.left / 2)
-            .attr('x', -(height + margin.bottom) / 2)
+            .attr('y', margin.left / 4)
+            .attr('x', -(height + margin.bottom - 10) / 2)
             .attr("transform", "rotate(-90)")
             .text(yLabelText);
 
@@ -130,7 +130,7 @@ function sourceBarChart() {
             .classed('bar', true)
             .classed('selected', true)
             .attr('x', d => xScale(d.source))
-            .attr('y', d => height + margin.bottom - Math.ceil(yScale(percent_spent(d))))
+            .attr('y', d => height + 10 - Math.ceil(yScale(percent_spent(d))))
             .attr('width', xScale.bandwidth())
             .attr('height', d => height - margin.bottom - Math.floor(yScale(percent_remaining(d))));
 
