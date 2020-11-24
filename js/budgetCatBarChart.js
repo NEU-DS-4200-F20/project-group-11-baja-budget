@@ -24,18 +24,30 @@ function budgetCatBarChart() {
 
         // todo comment
         get_selected_data = () => {
-            let filtered = original_data.filter(d => d.amount_spent !== 0 && selectedSources.has(d.source)),
-                total = d3.sum(filtered.map(d => d.amount_spent));
-            // console.log(filtered)
-            // console.log(categories)
-            // console.log(total)
-            return categories.map(c => {
-                let fraction = d3.sum(filtered.filter(d => c === d.category).map(d => d.amount_spent))
-                // console.log(c)
-                // console.log(fraction)
-                // console.log(fraction / total * 100)
-                return {category: c, percent: fraction / total * 100}
-            });
+            let filtered = original_data
+                    .filter(d => d.amount_spent !== 0 && selectedSources.has(d.source)),
+                total = d3.sum(filtered
+                    .filter(d => d.amount_spent > 0)
+                    .map(d => d.amount_spent));
+            if (total === 0) {
+                return categories.map(c => {
+                    return {category: c, percent: 0}
+                })
+            } else {
+                return categories.map(c => {
+
+                    let fraction = 0,
+                        to_sum = filtered
+                            .filter(d => c === d.category && d.amount_spent > 0)
+                            .map(d => d.amount_spent);
+
+                    if (to_sum.length > 0) {
+                        fraction = d3.sum(to_sum)
+                    }
+
+                    return {category: c, percent: fraction / total * 100}
+                });
+            }
         };
 
 
@@ -127,19 +139,19 @@ function budgetCatBarChart() {
             .attr('y', margin.top - 1)
             .attr('width', xScale.bandwidth() + 2)
             .attr('height', height - margin.top - margin.bottom + 2)
-            // todo these have to be updated
-            // .on("mouseout", () => tooltip2.style("visibility", "hidden"))
-            // .on("mouseover", () => tooltip2.style("visibility", "visible"))
-            // // function that change the tooltip when user hover / move / leave a cell
-            // .on("mousemove", (event, d) => tooltip2
-            //     .html(""
-            //         + "<p><b>Budget Category: "
-            //         + d.category
-            //         + "</b><br>Proportion of Total Amount Spent: "
-            //         + Math.round((d.percent) * 100) / 100
-            //         + "%</p>")
-            //     .style("left", (event.pageX) + "px")
-            //     .style("top", (event.pageY - 150) + "px"));
+        // todo these have to be updated
+        // .on("mouseout", () => tooltip2.style("visibility", "hidden"))
+        // .on("mouseover", () => tooltip2.style("visibility", "visible"))
+        // // function that change the tooltip when user hover / move / leave a cell
+        // .on("mousemove", (event, d) => tooltip2
+        //     .html(""
+        //         + "<p><b>Budget Category: "
+        //         + d.category
+        //         + "</b><br>Proportion of Total Amount Spent: "
+        //         + Math.round((d.percent) * 100) / 100
+        //         + "%</p>")
+        //     .style("left", (event.pageX) + "px")
+        //     .style("top", (event.pageY - 150) + "px"));
 
         return chart;
     }

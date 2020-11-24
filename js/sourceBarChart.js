@@ -31,6 +31,9 @@ function sourceBarChart() {
             } else if (event.shiftKey) {
                 if (selectedSources.size === all_sources.size) {
                     selectedSources = new Set([d.source])
+                }
+                else if (selectedSources.size > 1 && selectedSources.has(d.source)) {
+                    selectedSources.delete(d.source)
                 } else {
                     selectedSources.add(d.source)
                 }
@@ -102,6 +105,14 @@ function sourceBarChart() {
             .attr('x', - (height + margin.bottom) / 2)
             .attr("transform", "rotate(-90)")
             .text(yLabelText);
+
+        // append rectangle to remove selection
+        svg.append('rect')
+            .attr('width', width)
+            .attr('height', height)
+            //.attr('fill', 'none')
+            .on('click', () => updateSelection(null, null))
+
 
         // define tooltips
         tooltip2 = d3.select("#budget-cat-chart")
