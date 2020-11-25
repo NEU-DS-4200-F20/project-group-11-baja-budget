@@ -19,7 +19,9 @@ function totalBarChart() {
         // null or empty variables
         barS = null,
         barR = null,
+        dispatcher = null,
         originalData = null,
+        all_sources = new Set(),
         selectedSources = new Set(),
 
         // x scale function
@@ -36,13 +38,22 @@ function totalBarChart() {
         },
 
         // function returns the width of the selected rectangle
-        get_width = data => Math.ceil(xScale(percent_selected(data)));
+        get_width = data => Math.ceil(xScale(percent_selected(data))),
+
+        // Updates the selected sources and calls dispatcher
+        updateSelection = function () {
+            selectedSources = all_sources;
+            barS.transition().duration(transitionInProgress).attr('width', get_width(originalData))
+            // Get the name of our dispatcher's event, Let other charts know
+            dispatcher.call(Object.getOwnPropertyNames(dispatcher._)[0], this, selectedSources);
+        };
 
     // Create the chart by adding an svg to the div with the id specified by the selector using the given data
     function chart(selector, data, sources) {
 
         // save data to global constant, set selected sources to include all sources
         originalData = data;
+        all_sources = new Set(sources);
         selectedSources = new Set(sources);
 
         // define variables
@@ -52,7 +63,10 @@ function totalBarChart() {
             // define view box and svg object
             svg = d3.select(selector)
                 .append('svg')
-                .attr('viewBox', [0, 0, width + margin.left + margin.right, height].join(' '));
+                .attr('viewBox', [0, 0, width + margin.left + margin.right, height].join(' ')),
+
+            // create custom dispatch events
+            dispatch = d3.dispatch("mouseover", "mouseout");
 
         // add labels
         svg.append("text")
@@ -103,8 +117,15 @@ function totalBarChart() {
             .attr('y', margin.top - 1)
             .attr('width', barWidth + 2)
             .attr('height', barHeight + 2)
-            .on("mouseout", () => tooltip.style("visibility", "hidden"))
-            .on("mouseover", () => tooltip.style("visibility", "visible"))
+            .on('click', () => updateSelection()) // todo update selection
+            .on("mouseout", () => {
+                dispatch.call('mouseout')
+                tooltip.style("visibility", "hidden");
+            })
+            .on("mouseover", () => {
+                dispatch.call('mouseover');
+                tooltip.style("visibility", "visible");
+            })
             // function that change the tooltip when user hover / move / leave a cell
             .on("mousemove", (event) => tooltip
                 .html(""
@@ -126,6 +147,15 @@ function totalBarChart() {
         barS.transition().duration(transitionBuild).attr('width', get_width(data));
         barR.transition().duration(transitionBuild).attr('width', get_width(data));
 
+        // when mouseover is called, updates the class of the remaining bar
+        dispatch.on('mouseover', () => {
+            barR.classed('mouseover', true);
+        });
+
+        dispatch.on('mouseout', () => {
+            barR.classed('mouseover', false);
+        });
+
         return chart;
     }
 
@@ -136,6 +166,15 @@ function totalBarChart() {
         }
         selectedSources = selectedData;
         barS.transition().duration(transitionInProgress).attr('width', get_width(originalData));
+    };
+
+    // Gets or sets the dispatcher we use for selection events
+    chart.selectionDispatcher = function (_) {
+        if (!arguments.length) {
+            return dispatcher;
+        }
+        dispatcher = _;
+        return chart;
     };
 
     return chart;

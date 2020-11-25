@@ -29,6 +29,7 @@
 
                 // total budget chart
                 total_fuel = totalBarChart()
+                    .selectionDispatcher(d3.dispatch(dispatchString))
                 ('#total-bar-chart', data, sources),
 
                 // source bar chart
@@ -42,10 +43,12 @@
 
             // When the source chart selection is updated via clicks or brushing,
             // tell the scatterplot and table to update it's selection (linking)
-            source_fuel.selectionDispatcher()
-                .on(dispatchString + '.src-to-total', total_fuel.updateSelection);
-            source_fuel.selectionDispatcher()
-                .on(dispatchString + '.src-to-category', budget_category.updateSelection);
+            source_fuel.selectionDispatcher().on(dispatchString + '.src-to-total', total_fuel.updateSelection);
+            source_fuel.selectionDispatcher().on(dispatchString + '.src-to-category', budget_category.updateSelection);
+
+            total_fuel.selectionDispatcher().on(dispatchString + '.total-to-src', source_fuel.updateSelection);
+            total_fuel.selectionDispatcher().on(dispatchString + '.total-to-category', budget_category.updateSelection);
+
         })
     })
 })());

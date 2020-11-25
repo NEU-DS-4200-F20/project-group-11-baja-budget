@@ -53,8 +53,8 @@ function sourceBarChart() {
     function chart(selector, data, sources, sort) {
 
         // set global variables
-        selectedSources = new Set(sources);
         all_sources = new Set(sources);
+        selectedSources = new Set(sources);
 
         // sort data in descending order of the percent remaining
         if (sort) {
@@ -200,6 +200,12 @@ function sourceBarChart() {
         }
         dispatcher = _;
         return chart;
+    };
+
+    // Given selected data from another visualization select the relevant elements here (linking)
+    chart.updateSelection = function (selectedData) {
+        selectedSources = selectedData;
+        bars.classed("selected", d => isSelected(d.source));
     };
 
     return chart;
