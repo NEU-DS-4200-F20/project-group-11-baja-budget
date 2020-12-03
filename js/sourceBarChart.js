@@ -168,9 +168,9 @@ function sourceBarChart() {
                         .html(""
                             + "<p><b>Funding Source: "
                             + d.source
-                            + "</b><br>Amount Spent: "
+                            + "</b><br>Amount Spent: $"
                             + d.amount_spent
-                            + "<br>Amount Remaining: "
+                            + "<br>Amount Remaining: $"
                             + Math.round((d.total_amount - d.amount_spent) * 100) / 100)
                         .style("left", (event.pageX) + "px")
                         .style("top", (event.pageY - 150) + "px");

@@ -129,9 +129,9 @@ function totalBarChart() {
             // function that change the tooltip when user hover / move / leave a cell
             .on("mousemove", (event) => tooltip
                 .html(""
-                    + "Budget Total: "
+                    + "Budget Total: $"
                     + total
-                    + "<br>Amount Remaining: "
+                    + "<br>Amount Remaining: $"
                     + Math.round((total - remaining) * 100 / 100))
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY - 150) + "px")
